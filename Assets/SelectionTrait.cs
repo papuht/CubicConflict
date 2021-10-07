@@ -5,7 +5,7 @@ using UnityEngine;
 public class SelectionTrait : MonoBehaviour
 {
     void Start() {
-         GetComponent<Renderer>().material.color = Color.green;
+         GetComponent<Renderer>().material.color = Color.blue;
     }
 
     private void OnDestroy() {
