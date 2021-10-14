@@ -12,4 +12,10 @@ public class SelectionTrait : MonoBehaviour
         GetComponent<Renderer>().material.color = Color.white;
     }
 
+    public void refresh() {
+        if(GetComponent<Renderer>().material.color != Color.blue) {
+            GetComponent<Renderer>().material.color = Color.blue;
+        }
+    }
+
 }

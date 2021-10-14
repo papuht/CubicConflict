@@ -5,6 +5,17 @@ using UnityEngine;
 public class SelectionMap : MonoBehaviour
 {
     public Dictionary<int, GameObject> selectedUnits = new Dictionary<int, GameObject>();
+
+     void Update() { 
+        foreach(KeyValuePair<int, GameObject> entry in this.selectedUnits) {
+            if(entry.Value != null) {
+                if(this.selectedUnits[entry.Key].GetComponent<SelectionTrait>() == null) {
+                    entry.Value.AddComponent<SelectionTrait>();
+                }
+                entry.Value.GetComponent<SelectionTrait>().refresh();
+            }
+        }
+     }
     
     public void selectObject(GameObject obj) {
         int id = obj.GetInstanceID();
