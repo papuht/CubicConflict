@@ -26,7 +26,6 @@ public class Movement : MonoBehaviour {
     void Move() {
          foreach(KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
             if(entry.Value != null) {
-                Debug.Log("Moving: " + entry.Value);
                 Rigidbody2D body = entry.Value.GetComponent<Rigidbody2D>();
                 body.velocity = new Vector2(this.direction.x * this.ms, this.direction.y * this.ms);
             }

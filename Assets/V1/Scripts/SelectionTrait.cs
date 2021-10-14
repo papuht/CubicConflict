@@ -9,7 +9,6 @@ public class SelectionTrait : MonoBehaviour
     }
 
     private void OnDestroy() {
-        Debug.Log("Destroy select called");
         GetComponent<Renderer>().material.color = Color.white;
     }
 
