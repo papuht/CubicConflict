@@ -20,7 +20,7 @@ public class CollisionDamage : MonoBehaviour
     {
        
 
-        if (collision.collider.GetType() == typeof(PolygonCollider2D) && collision.otherCollider.GetType() == typeof(BoxCollider2D)) {
+        if (collision.collider.GetType() == typeof(PolygonCollider2D) && collision.otherCollider.GetType() == typeof(BoxCollider2D) && collision.collider.tag != collision.otherCollider.tag) {
             Destroy(collision.otherCollider.gameObject);
         }
     }
