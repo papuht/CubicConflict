@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnPoint : MonoBehaviour
 {
-    public int timer = 4000;
+    
     public GameObject player;
     public GameObject spawn;
     public double previousCheck;
