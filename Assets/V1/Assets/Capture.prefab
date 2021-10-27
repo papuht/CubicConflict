@@ -96,7 +96,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04e720119dda5148b085ffbe590e95c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hex: {fileID: 6120334747687652873}
   counter1: 0
   counter2: 0
 --- !u!61 &7273744774184435174

@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
     private SelectionMap map;
-    private float ms = 8;
+    private float ms = 10;
     Dictionary<int, MovingObject> movingObjects = new Dictionary<int, MovingObject>();
     
     void Start() {

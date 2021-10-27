@@ -43,7 +43,7 @@ public class SelectionListener : MonoBehaviour {
                 this.raycast = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
                 Debug.Log("Raycast: " + this.raycast.collider);
 
-                if(this.raycast.collider != null) {
+                if(this.raycast.collider != null && this.raycast.collider.tag == "Player") {
                     if(Input.GetKey(KeyCode.LeftShift)) {
                         this.map.selectObject(this.raycast.transform.gameObject);
                     }
@@ -77,7 +77,7 @@ public class SelectionListener : MonoBehaviour {
                 //Create a box in the set 'center' with the set 'size' and see what colliders get hit by said box
                 RaycastHit2D[] casts = Physics2D.BoxCastAll(center,size, 0, Vector2.zero);
                 foreach(RaycastHit2D hit in casts) {
-                    if(hit.collider.GetType() == typeof(BoxCollider2D)) {
+                    if(hit.collider.GetType() == typeof(BoxCollider2D) && hit.collider.tag == "Player") {
                         this.map.selectObject(hit.transform.gameObject);
                         Debug.Log("BoxCast: " + hit.collider);
                     }
