@@ -7,12 +7,12 @@ public class CollisionDamage : NetworkBehaviour {
 
 
 
-    [Server]
+    [Server] //[Server] == Run on server only, since we dont want clients to handle collision logic
     private void OnCollisionEnter2D(Collision2D collision) {
         Collider2D collider1 = collision.collider;
         Collider2D collider2 = collision.otherCollider;
 
-        //Just in case check authority over object
+        //Check if one of the colliders is already deleted
         if(collider1 == null || collider2 == null) {
             return;
         }
@@ -35,11 +35,6 @@ public class CollisionDamage : NetworkBehaviour {
             } 
         }
       
-    }
-
-    [Command]
-    private void DestroyOnServer(GameObject obj) {
-        NetworkServer.UnSpawn(obj);
     }
 
 }
