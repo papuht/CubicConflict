@@ -1,34 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class CollisionDamage : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+public class CollisionDamage : NetworkBehaviour {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-       
 
-        if (collision.collider.GetType() == typeof(PolygonCollider2D) && collision.otherCollider.GetType() == typeof(BoxCollider2D) && collision.collider.tag != collision.otherCollider.tag) {
-            Destroy(collision.otherCollider.gameObject);
+    [Server]
+    private void OnCollisionEnter2D(Collision2D collision) {
+        Collider2D collider1 = collision.collider;
+        Collider2D collider2 = collision.otherCollider;
+
+        //Just in case check authority over object
+        if(collider1 == null || collider2 == null) {
+            return;
         }
+
+        if( //First we establish on the server that 2 enemy objects have collided
+            collider1.gameObject.tag == collider2.gameObject.tag //This assumes that damage only affects shapes with thet tag Player
+            && collider1.gameObject.GetComponent<PlayerId>().get() != collider2.gameObject.GetComponent<PlayerId>().get()
+        ) {
+            if ( //Case 1: Collider2 got hit with an edge
+                collider1.GetType() == typeof(BoxCollider2D) 
+                && collider2.GetType() == typeof(PolygonCollider2D)
+            ) {
+                Destroy(collider2.gameObject);
+            }
+            else if( //Case 2: Collider1 got hit with an edge
+                collider1.GetType() == typeof(PolygonCollider2D) 
+                && collider2.GetType() == typeof(BoxCollider2D)
+            ) {
+                Destroy(collider1.gameObject);
+            } 
+        }
+      
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        
+    [Command]
+    private void DestroyOnServer(GameObject obj) {
+        NetworkServer.UnSpawn(obj);
     }
-
 
 }
