@@ -6,10 +6,17 @@ using Mirror;
 public class CollisionDamage : NetworkBehaviour {
 
 
+    //The server method throws warnings when its called on clients
+    //Now we can check if caller is the server before calling the server only method
+    private void OnCollisionEnter2D(Collision2D collision) { 
+        if(this.isServer) {
+            this.handleCollision(collision);
+        }
+    }
 
 
     [Server] //[Server] == Run on server only, since we dont want clients to handle collision logic
-    private void OnCollisionEnter2D(Collision2D collision) {
+    private void handleCollision(Collision2D collision) {
         Collider2D collider1 = collision.collider;
         Collider2D collider2 = collision.otherCollider;
 
@@ -29,8 +36,8 @@ public class CollisionDamage : NetworkBehaviour {
                 && collider2.GetType() == typeof(PolygonCollider2D)
             )
             {
-                collider2.gameObject.GetComponent<HitPoints>().set(1);
-                if (collider2.gameObject.GetComponent<HitPoints>().get() == 0)
+                collider2.gameObject.GetComponent<HitPoints>().reduce(1);
+                if (collider2.gameObject.GetComponent<HitPoints>().get() <= 0)
                 {
                     Destroy(collider2.gameObject);
                 }
@@ -41,8 +48,8 @@ public class CollisionDamage : NetworkBehaviour {
             )
             {
 
-                collider1.gameObject.GetComponent<HitPoints>().set(1);
-                if (collider1.gameObject.GetComponent<HitPoints>().get() == 0)
+                collider1.gameObject.GetComponent<HitPoints>().reduce(1);
+                if (collider1.gameObject.GetComponent<HitPoints>().get() <= 0)
                 {
                     Destroy(collider1.gameObject);
                 }

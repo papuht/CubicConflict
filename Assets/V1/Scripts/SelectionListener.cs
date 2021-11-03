@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class SelectionListener : MonoBehaviour {
+public class SelectionListener : NetworkBehaviour {
 
     private SelectionMap map;
     private SelectionDrawer drawer;
@@ -45,11 +46,17 @@ public class SelectionListener : MonoBehaviour {
 
                 if(this.raycast.collider != null && this.raycast.collider.tag == "Player") {
                     if(Input.GetKey(KeyCode.LeftShift)) {
-                        this.map.selectObject(this.raycast.transform.gameObject);
+
+                        //Check if the player object belongs to us
+                        if(this.raycast.transform.gameObject.GetComponent<PlayerId>().isOwner()) {
+                            this.map.selectObject(this.raycast.transform.gameObject);
+                        }
                     }
                     else {
                         this.map.deselectAll();
-                        this.map.selectObject(this.raycast.transform.gameObject);
+                         if(this.raycast.transform.gameObject.GetComponent<PlayerId>().isOwner()) {
+                            this.map.selectObject(this.raycast.transform.gameObject);
+                         }
                     }
                 }
                 else {
@@ -78,8 +85,10 @@ public class SelectionListener : MonoBehaviour {
                 RaycastHit2D[] casts = Physics2D.BoxCastAll(center,size, 0, Vector2.zero);
                 foreach(RaycastHit2D hit in casts) {
                     if(hit.collider.GetType() == typeof(BoxCollider2D) && hit.collider.tag == "Player") {
-                        this.map.selectObject(hit.transform.gameObject);
-                        Debug.Log("BoxCast: " + hit.collider);
+                        if(hit.transform.gameObject.GetComponent<PlayerId>().isOwner()) {
+                            this.map.selectObject(hit.transform.gameObject);
+                            Debug.Log("BoxCast: " + hit.collider);
+                        }
                     }
                 }
             }

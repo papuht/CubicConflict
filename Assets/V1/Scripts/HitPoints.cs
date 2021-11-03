@@ -6,14 +6,15 @@ using Mirror;
 public class HitPoints : NetworkBehaviour
 {
     [SyncVar]
-    private int hitpoints = 50;
+    private int hitpoints = 15;
     public int get()
     {
         return this.hitpoints;
     }
 
-    public void set(int hit)
+    public void reduce(int hit)
     {
         this.hitpoints = hitpoints-hit;
+        //Debug.Log(this.gameObject + " Got hit, HP: " + this.hitpoints);
     }
 }
