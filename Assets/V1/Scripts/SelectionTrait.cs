@@ -9,7 +9,7 @@ public class SelectionTrait : MonoBehaviour
     }
 
     private void OnDestroy() {
-        GetComponent<Renderer>().material.color = Color.white;
+        GetComponent<Renderer>().material.color = GetComponent<PlayerId>().getTeamColor();
     }
 
     public void refresh() {

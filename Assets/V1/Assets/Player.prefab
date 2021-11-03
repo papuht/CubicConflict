@@ -182,8 +182,8 @@ MonoBehaviour:
   bufferSizeLimit: 64
   catchupThreshold: 4
   catchupMultiplier: 0.1
-  showGizmos: 1
-  showOverlay: 1
+  showGizmos: 0
+  showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!114 &6217710283950187589
 MonoBehaviour:

@@ -16,31 +16,52 @@ public class SpawnPoint : NetworkBehaviour {
     public GameObject player;
     private GameObject spawn;
     private double previousCheck;
+    private double startCheck;
 
+    [SyncVar]
+    private bool start;
 
-
-    //This is called when player connects to host
-    public override void OnStartLocalPlayer() { 
-        /*
-            We have to set the spawn object like this 
-            since the script is already attached to a spawn object
-        */
-        //this.spawn = this.gameObject; 
-    }
+    [SyncVar]
+    private Color teamColor;
 
     void Start() {
         this.previousCheck = Time.time;
+        this.startCheck = Time.time;
         this.spawn = this.gameObject;
     }
+
+     public override void OnStartClient() {
+         if (isServer) {
+             this.start = false;
+             this.teamColor = Random.ColorHSV(); //Choose color on client start
+         }
+     }
+
 
     void Update() {
         if(!hasAuthority) {
             return;
         }
 
+        if(!start) {
+            this.readyToStart();
+            return;
+        }
+
         if (Time.time - this.previousCheck > 10) {
             this.SpawnOnServer();
             this.previousCheck = Time.time;
+        }
+    }
+
+    [Command]
+    public void readyToStart() {
+        if(NetworkServer.connections.Count >= 2) {
+            this.start = true;
+            this.previousCheck = Time.time;
+        }
+        else {
+            this.start =  false;
         }
     }
 
@@ -53,9 +74,10 @@ public class SpawnPoint : NetworkBehaviour {
             GameObject spawnablePlayer = Instantiate(this.player, pos, Quaternion.identity);
             //Set a unique id that we can compare on collision istead of tags
             spawnablePlayer.GetComponent<PlayerId>().set(connectionToClient.connectionId);
+            //Set color to object
+            spawnablePlayer.GetComponent<PlayerId>().setTeamColor(this.teamColor);
             //This spawns the object for all clients and also tells networkmanager who is the owner
             NetworkServer.Spawn(spawnablePlayer, connectionToClient); 
-            
     }
 
 }
