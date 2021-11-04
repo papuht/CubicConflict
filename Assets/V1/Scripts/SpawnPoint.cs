@@ -33,7 +33,7 @@ public class SpawnPoint : NetworkBehaviour {
      public override void OnStartClient() {
          if (isServer) {
              this.start = false;
-             this.teamColor = Random.ColorHSV(); //Choose color on client start
+             this.teamColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f); //Choose color on client start
          }
      }
 
