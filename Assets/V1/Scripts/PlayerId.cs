@@ -31,6 +31,6 @@ public class PlayerId : NetworkBehaviour {
     }
 
      void Start() {
-         this.GetComponent<SpriteRenderer>().material.color = teamColor;
+         this.GetComponentInChildren<SpriteRenderer>().material.color = teamColor;
      }
 }

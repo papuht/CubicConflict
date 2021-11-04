@@ -5,16 +5,17 @@ using UnityEngine;
 public class SelectionTrait : MonoBehaviour
 {
     void Start() {
-         GetComponent<Renderer>().material.color = Color.blue;
+        GetComponentInChildren<SpriteRenderer>().material.color = Color.black;
     }
 
     private void OnDestroy() {
-        GetComponent<Renderer>().material.color = GetComponent<PlayerId>().getTeamColor();
+        GetComponentInChildren<Renderer>().material.color = GetComponent<PlayerId>().getTeamColor();
     }
 
     public void refresh() {
-        if(GetComponent<Renderer>().material.color != Color.blue) {
-            GetComponent<Renderer>().material.color = Color.blue;
+        
+        if(GetComponentInChildren<SpriteRenderer>().material.color != Color.black) {
+            GetComponentInChildren<SpriteRenderer>().material.color = Color.black;
         }
     }
 
