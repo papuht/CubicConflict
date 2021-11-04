@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.UI;
 
 public class Capture : NetworkBehaviour {
 
@@ -15,6 +16,10 @@ public class Capture : NetworkBehaviour {
 
     private float p1Check = 0;
     private float p2Check = 0;
+
+    
+    public Text player1Score;
+    public Text player2Score;
 
     [Server] //[Server] == Only run this code on the server
     private void OnCollisionStay2D(Collision2D collision) {
@@ -37,6 +42,7 @@ public class Capture : NetworkBehaviour {
                 counter1++;
                 this.p1Check = Time.time;
                 Debug.Log("P1-Score: " + counter1);
+                player1Score.text = counter1.ToString();
             }
             else if ( //Normal case of colliding with player2
                 collision.gameObject.GetComponent<PlayerId>().get() == this.player2ID
@@ -46,6 +52,7 @@ public class Capture : NetworkBehaviour {
                 counter2++;
                 this.p2Check = Time.time;
                 Debug.Log("P2-Score: " + counter2);
+                player2Score.text = counter2.ToString();
             }
             else if( //When a new ID is met save it as player2
                 this.player2ID == 0 
