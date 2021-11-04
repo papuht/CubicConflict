@@ -17,12 +17,34 @@ public class Capture : NetworkBehaviour {
     private float p1Check = 0;
     private float p2Check = 0;
 
-    
     public Text player1Score;
+
     public Text player2Score;
 
-    [Server] //[Server] == Only run this code on the server
-    private void OnCollisionStay2D(Collision2D collision) {
+    public override void OnStartClient() {
+        if(isServer) {
+            player1Score.text = counter1.ToString();
+            player2Score.text = counter2.ToString();
+        }
+    }
+
+    void Update() {
+        this.player1Score.text = counter1.ToString();
+        this.player2Score.text = counter2.ToString();
+    }
+
+
+    //The server method throws warnings when its called on clients
+    //Now we can check if caller is the server before calling the server only method
+    private void OnCollisionStay2D(Collision2D collision) { 
+        if(this.isServer) {
+            this.handleCounter(collision);
+        }
+    }
+
+
+    [Server] //[Server] == Run on server only, since we dont want clients to handle collision logic
+    private void handleCounter(Collision2D collision) {
 
         //First check that collision is by a player object
         if(collision.gameObject.tag == "Player") {
@@ -41,8 +63,6 @@ public class Capture : NetworkBehaviour {
             ) {
                 counter1++;
                 this.p1Check = Time.time;
-                Debug.Log("P1-Score: " + counter1);
-                player1Score.text = counter1.ToString();
             }
             else if ( //Normal case of colliding with player2
                 collision.gameObject.GetComponent<PlayerId>().get() == this.player2ID
@@ -51,8 +71,6 @@ public class Capture : NetworkBehaviour {
             ) {
                 counter2++;
                 this.p2Check = Time.time;
-                Debug.Log("P2-Score: " + counter2);
-                player2Score.text = counter2.ToString();
             }
             else if( //When a new ID is met save it as player2
                 this.player2ID == 0 
@@ -62,7 +80,6 @@ public class Capture : NetworkBehaviour {
                 this.player2ID = collision.gameObject.GetComponent<PlayerId>().get();
                 counter2++;
                 this.p2Check = Time.time;
-                Debug.Log("P2-Score: " + counter2);
             }
             
 
