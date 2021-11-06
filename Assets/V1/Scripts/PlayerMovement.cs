@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour {
+public class PlayerMovement : MonoBehaviour {
     private SelectionMap map;
-    private float ms = 10;
     Dictionary<int, MovingObject> movingObjects = new Dictionary<int, MovingObject>();
     
     void Start() {
@@ -28,7 +27,16 @@ public class PlayerController : MonoBehaviour {
                     }
                     else { //Add selected object to movement group
                         Debug.Log("Adding to Movement group: " + entry.Value);
-                        this.movingObjects.Add(entry.Key, new MovingObject(entry.Value, click, this.ms));
+
+                        this.movingObjects.Add(
+                            entry.Key, 
+                            new MovingObject(
+                                entry.Value, 
+                                click, 
+                                entry.Value.GetComponent<PlayerResources>().getMovementSpeed()
+                            )
+                        );
+                        
                     }
                 }
             }

@@ -27,7 +27,7 @@ public class CollisionDamage : NetworkBehaviour {
 
         if( //First we establish on the server that 2 enemy objects have collided
             collider1.gameObject.tag == collider2.gameObject.tag //This assumes that damage only affects shapes with thet tag Player
-            && collider1.gameObject.GetComponent<PlayerId>().get() != collider2.gameObject.GetComponent<PlayerId>().get()
+            && collider1.gameObject.GetComponent<PlayerResources>().getPlayerId() != collider2.gameObject.GetComponent<PlayerResources>().getPlayerId()
         ) {
 
 
@@ -36,8 +36,8 @@ public class CollisionDamage : NetworkBehaviour {
                 && collider2.GetType() == typeof(PolygonCollider2D)
             )
             {
-                collider2.gameObject.GetComponent<HitPoints>().reduce(1);
-                if (collider2.gameObject.GetComponent<HitPoints>().get() <= 0)
+                collider2.gameObject.GetComponent<PlayerResources>().reduceHitpoints(1);
+                if (collider2.gameObject.GetComponent<PlayerResources>().isDead())
                 {
                     Destroy(collider2.gameObject);
                 }
@@ -48,8 +48,8 @@ public class CollisionDamage : NetworkBehaviour {
             )
             {
 
-                collider1.gameObject.GetComponent<HitPoints>().reduce(1);
-                if (collider1.gameObject.GetComponent<HitPoints>().get() <= 0)
+                collider1.gameObject.GetComponent<PlayerResources>().reduceHitpoints(1);
+                if (collider1.gameObject.GetComponent<PlayerResources>().isDead())
                 {
                     Destroy(collider1.gameObject);
                 }

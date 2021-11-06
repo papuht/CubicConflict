@@ -9,11 +9,11 @@ public class SelectionTrait : MonoBehaviour
     }
 
     private void OnDestroy() {
-        GetComponentInChildren<Renderer>().material.color = GetComponent<PlayerId>().getTeamColor();
+        Color originalColor = GetComponent<PlayerResources>().getColor();
+        GetComponent<PlayerResources>().setSpriteColor(originalColor);
     }
 
     public void refresh() {
-        
         if(GetComponentInChildren<SpriteRenderer>().material.color != Color.black) {
             GetComponentInChildren<SpriteRenderer>().material.color = Color.black;
         }

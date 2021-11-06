@@ -48,13 +48,13 @@ public class SelectionListener : NetworkBehaviour {
                     if(Input.GetKey(KeyCode.LeftShift)) {
 
                         //Check if the player object belongs to us
-                        if(this.raycast.transform.gameObject.GetComponent<PlayerId>().isOwner()) {
+                        if(this.raycast.transform.gameObject.GetComponent<PlayerResources>().isOwner()) {
                             this.map.selectObject(this.raycast.transform.gameObject);
                         }
                     }
                     else {
                         this.map.deselectAll();
-                         if(this.raycast.transform.gameObject.GetComponent<PlayerId>().isOwner()) {
+                         if(this.raycast.transform.gameObject.GetComponent<PlayerResources>().isOwner()) {
                             this.map.selectObject(this.raycast.transform.gameObject);
                          }
                     }
@@ -85,7 +85,7 @@ public class SelectionListener : NetworkBehaviour {
                 RaycastHit2D[] casts = Physics2D.BoxCastAll(center,size, 0, Vector2.zero);
                 foreach(RaycastHit2D hit in casts) {
                     if(hit.collider.GetType() == typeof(BoxCollider2D) && hit.collider.tag == "Player") {
-                        if(hit.transform.gameObject.GetComponent<PlayerId>().isOwner()) {
+                        if(hit.transform.gameObject.GetComponent<PlayerResources>().isOwner()) {
                             this.map.selectObject(hit.transform.gameObject);
                             Debug.Log("BoxCast: " + hit.collider);
                         }
