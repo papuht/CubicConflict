@@ -12,72 +12,67 @@ public class SpawnPoint : NetworkBehaviour {
         Therefore we have to mark the methods with [Markers] that tell the manager,
         if the function should be ran on [Server], [Client] or called by client on server by [Command]
     */
-    
-    public GameObject player;
-    private GameObject spawn;
-    private double previousCheck;
-    private double startCheck;
 
-    [SyncVar]
-    private bool start;
+    private double lastCheck;
 
-    [SyncVar]
-    private Color teamColor;
-
-    void Start() {
-        this.previousCheck = Time.time;
-        this.startCheck = Time.time;
-        this.spawn = this.gameObject;
+    public void resetTimer() {
+        this.lastCheck = Time.time;
     }
 
-     public override void OnStartClient() {
-         if (isServer) {
-             this.start = false;
-             this.teamColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f); //Choose color on client start
-         }
-     }
-
+    void Start() {
+        this.lastCheck = Time.time;
+    }
 
     void Update() {
         if(!hasAuthority) {
             return;
         }
 
-        if(!start) {
-            this.readyToStart();
+        ConnectionResources cr = this.GetComponent<ConnectionResources>();
+
+        if(!cr.isReady()) {
             return;
         }
 
-        if (Time.time - this.previousCheck > 10) {
+        if ((Time.time - this.lastCheck) > cr.getSpawnCooldown()) {
             this.SpawnOnServer();
-            this.previousCheck = Time.time;
+            this.lastCheck = Time.time;
         }
     }
 
-    [Command]
-    public void readyToStart() {
-        if(NetworkServer.connections.Count >= 2) {
-            this.start = true;
-            this.previousCheck = Time.time;
-        }
-        else {
-            this.start =  false;
-        }
-    }
 
     [Command] //Command tag == This should be ran on the server, but the client commands it to do so
     public void SpawnOnServer() {
-            float posX = spawn.transform.position.x;
-            float posY = spawn.transform.position.y;
-            Vector3 pos = new Vector2(posX, posY); 
 
-            GameObject spawnablePlayer = Instantiate(this.player, pos, Quaternion.identity);
+            ConnectionResources cr = GetComponent<ConnectionResources>();
+
+            GameObject spawnablePlayer = Instantiate(
+                cr.getSpawnShape().prefab, 
+                GetComponent<ConnectionResources>().getSpawnPosition(), 
+                Quaternion.identity
+            );
+
+            PlayerResources pr = spawnablePlayer.GetComponent<PlayerResources>();
+
             //Set a unique id that we can compare on collision istead of tags
-            spawnablePlayer.GetComponent<PlayerId>().set(connectionToClient.connectionId);
+            pr.setPlayerId(connectionToClient.connectionId);
+
             //Set color to object
-            spawnablePlayer.GetComponent<PlayerId>().setTeamColor(this.teamColor);
+            pr.setColor(GetComponent<ConnectionResources>().getTeamColor());
+
+            //Init default variables
+            pr.setHitpoints(cr.getSpawnShape().hitpoints);
+            pr.setMovementSpeed(cr.getSpawnShape().movementspeed);
+            pr.GetComponent<PlayerResources>().setRotationSpeed(cr.getSpawnShape().rotationspeed);
+
+            //Give player object a reference to ConnectionResources
+            pr.setConnectionResources(cr);
+
+            cr.addToPlayerObjects(spawnablePlayer);
+
             //This spawns the object for all clients and also tells networkmanager who is the owner
             NetworkServer.Spawn(spawnablePlayer, connectionToClient); 
     }
+
 
 }

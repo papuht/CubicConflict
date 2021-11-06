@@ -14,10 +14,9 @@ GameObject:
   - component: {fileID: -1391034996192251581}
   - component: {fileID: 7098088096565674315}
   - component: {fileID: 4634382699236213135}
-  - component: {fileID: 6217710283950187589}
   - component: {fileID: 6892421943644925397}
   - component: {fileID: 8397163208613196066}
-  - component: {fileID: -7709309085445249053}
+  - component: {fileID: -8697389577880504128}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -134,20 +133,6 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
---- !u!114 &6217710283950187589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 831503909029019738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8eb01c3bad6381e47b399087a4f55c7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
 --- !u!60 &6892421943644925397
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -207,7 +192,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &-7709309085445249053
+--- !u!114 &-8697389577880504128
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -216,7 +201,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 831503909029019738}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac9d7cc6cf6a7d646b1bfe069c82ce85, type: 3}
+  m_Script: {fileID: 11500000, guid: a755417f662cc2940b2672fb9a4788d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0

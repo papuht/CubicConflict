@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3381073493851452117}
   - component: {fileID: 2866777490560262235}
   - component: {fileID: -4260272776828787198}
+  - component: {fileID: 6259699819220023540}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: GameController
@@ -146,3 +147,19 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!114 &6259699819220023540
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3381073493851452118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a47241c02b872c489f59c96dfe576b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  spawnablePrefabs:
+  - {fileID: 831503909029019738, guid: d287d13c82cf3484cb340daa50c35636, type: 3}

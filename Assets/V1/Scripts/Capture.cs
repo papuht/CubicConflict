@@ -58,14 +58,14 @@ public class Capture : NetworkBehaviour {
 
             //Normal case of colliding with host ie. player1
             if (
-                collision.gameObject.GetComponent<PlayerId>().get() == this.player1ID
+                collision.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player1ID
                 && (Time.time - this.p1Check > 2)
             ) {
                 counter1++;
                 this.p1Check = Time.time;
             }
             else if ( //Normal case of colliding with player2
-                collision.gameObject.GetComponent<PlayerId>().get() == this.player2ID
+                collision.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player2ID
                 && (Time.time - this.p2Check > 2)
                 && player2ID != 0
             ) {
@@ -75,9 +75,9 @@ public class Capture : NetworkBehaviour {
             else if( //When a new ID is met save it as player2
                 this.player2ID == 0 
                 && (Time.time - this.p2Check > 2)
-                && collision.gameObject.GetComponent<PlayerId>().get() != 0
+                && collision.gameObject.GetComponent<PlayerResources>().getPlayerId() != 0
             ) { 
-                this.player2ID = collision.gameObject.GetComponent<PlayerId>().get();
+                this.player2ID = collision.gameObject.GetComponent<PlayerResources>().getPlayerId();
                 counter2++;
                 this.p2Check = Time.time;
             }
