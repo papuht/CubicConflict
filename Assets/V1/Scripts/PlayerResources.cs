@@ -14,13 +14,22 @@ public class PlayerResources : NetworkBehaviour {
     private Color color = Color.white; 
 
     [SyncVar]
-    private int hitpoints = 15;
+    private int hitpoints = 1; //Just set some values in case, so netowrk dosent throw errors
 
     [SyncVar]
-    private int movementspeed = 10;
+    private int baseHitpoints = 1; 
 
     [SyncVar]
-    private float rotationspeed = 390f;
+    private int movementspeed = 1;
+
+    [SyncVar]
+    private int baseMovementspeed = 1;
+
+    [SyncVar]
+    private float rotationspeed = 10f;
+
+    [SyncVar]
+    private float baseRotationspeed = 10f;
 
     [SyncVar]
     public ConnectionResources cr;
@@ -73,6 +82,21 @@ public class PlayerResources : NetworkBehaviour {
     }
 
 
+    [Server] //Only use when spawning
+    public void initHitpoints(int hitpoints) {
+        this.hitpoints = hitpoints;
+        this.baseHitpoints = hitpoints;
+    }
+
+
+    /**
+    * Return the inited value of the variable
+    * Can be used to restore variable to original value
+    */
+    public int getBaseHitpoints() {
+        return this.baseHitpoints;
+    }
+
     [Server]
     public void setHitpoints(int hitpoints) {
         this.hitpoints = hitpoints;
@@ -97,9 +121,28 @@ public class PlayerResources : NetworkBehaviour {
         return (this.hitpoints <= 0);
     }
 
+    [Server] //Only use when spawning
+    public void initMovementSpeed(int ms) {
+        this.movementspeed = ms;
+        this.baseMovementspeed = ms;
+    }
+
+
+    /**
+    * Return the inited value of the variable
+    * Can be used to restore variable to original value
+    */
+    public int getBaseMovementSpeed() {
+        return this.baseMovementspeed;
+    }
+
     [Server]
     public void setMovementSpeed(int ms) {
         this.movementspeed = ms;
+
+        if(this.movementspeed < 0) {
+            this.movementspeed = 0;
+        }
     }
 
     public int getMovementSpeed() {
@@ -107,11 +150,57 @@ public class PlayerResources : NetworkBehaviour {
     }
 
     [Server]
+    public void reduceMovementSpeed(int slowAmount) {
+        this.movementspeed = movementspeed - slowAmount;
+
+        if(this.movementspeed < 0) {
+            this.movementspeed = 0;
+        }
+    }
+
+    [Server]
+    public void increaseMovementSpeed(int boostAmount) {
+        this.movementspeed = movementspeed + boostAmount;
+    }
+
+     [Server] //Only use when spawning
+    public void initRotationSpeed(float rs) {
+        this.rotationspeed= rs;
+        this.baseRotationspeed = rs;
+    }
+
+    /**
+    * Return the inited value of the variable
+    * Can be used to restore variable to original value
+    */
+    public float getBaseRotationSpeed() {
+        return this.baseRotationspeed;
+    }
+
+    [Server]
     public void setRotationSpeed(float rs) {
         this.rotationspeed = rs;
+
+        if(this.rotationspeed < 0f) {
+            this.rotationspeed = 0f;
+        }
     }
 
     public float getRotationSpeed() {
         return this.rotationspeed;
+    }
+
+    [Server]
+    public void reduceRotationSpeed(float slowAmount) {
+        this.rotationspeed = rotationspeed - slowAmount;
+
+        if(this.rotationspeed < 0f) {
+            this.rotationspeed = 0f;
+        }
+    }
+
+    [Server]
+    public void increaseRotationSpeed(float boostAmount) {
+         this.rotationspeed = rotationspeed + boostAmount;
     }
 }
