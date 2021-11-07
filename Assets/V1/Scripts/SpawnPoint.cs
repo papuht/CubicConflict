@@ -61,9 +61,9 @@ public class SpawnPoint : NetworkBehaviour {
             pr.setColor(GetComponent<ConnectionResources>().getTeamColor());
 
             //Init default variables
-            pr.setHitpoints(cr.getSpawnShape().hitpoints);
-            pr.setMovementSpeed(cr.getSpawnShape().movementspeed);
-            pr.GetComponent<PlayerResources>().setRotationSpeed(cr.getSpawnShape().rotationspeed);
+            pr.initHitpoints(cr.getSpawnShape().hitpoints);
+            pr.initMovementSpeed(cr.getSpawnShape().movementspeed);
+            pr.initRotationSpeed(cr.getSpawnShape().rotationspeed);
 
             //Give player object a reference to ConnectionResources
             pr.setConnectionResources(cr);
