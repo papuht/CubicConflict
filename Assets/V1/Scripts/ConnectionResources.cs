@@ -127,7 +127,7 @@ public class ConnectionResources : NetworkBehaviour {
              this.playerId = connectionToClient.connectionId;
              this.teamColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
              this.spawnCooldown = 10;
-             this.ready = false;
+             this.ready = true;
 
              this.initSpawnableObjects();
          }
