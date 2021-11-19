@@ -6,6 +6,9 @@ using System.Linq;
 
 public class ConnectionResources : NetworkBehaviour {
 
+    Color[] p1TeamColors = new Color[] {Color.blue};
+    Color[] p2TeamColors = new Color[] {Color.red};
+
     private int playerId;
 
     /**
@@ -125,7 +128,14 @@ public class ConnectionResources : NetworkBehaviour {
          if (isServer) {
              Debug.Log("Player init started: " + connectionToClient.connectionId);
              this.playerId = connectionToClient.connectionId;
-             this.teamColor = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
+
+             if(connectionToClient.connectionId == 0) {
+                this.teamColor = this.p1TeamColors[Random.Range(0, this.p1TeamColors.Length)];
+             }
+             else {
+                 this.teamColor = this.p2TeamColors[Random.Range(0, this.p2TeamColors.Length)];
+             }
+
              this.spawnCooldown = 10;
              this.ready = true;
 
