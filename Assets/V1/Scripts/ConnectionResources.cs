@@ -43,8 +43,19 @@ public class ConnectionResources : NetworkBehaviour {
     [Server]
     public void setSpawnShape(SpawnableShape shape) {
         this.spawnShape = shape;
+        this.spawnCooldown = this.spawnShape.cooldown; 
     }
 
+    [Server]
+    public bool setSpawnShape(string name) {
+        SpawnableShape shape = this.getSpawnableShape(name);
+        if(!shape.Equals(default(SpawnableShape))) {
+            this.spawnShape = shape;
+            this.spawnCooldown = this.spawnShape.cooldown; 
+            return true;
+        }
+        return false;
+    }
 
     public Color getTeamColor() {
         return this.teamColor;
@@ -75,7 +86,7 @@ public class ConnectionResources : NetworkBehaviour {
 
     public SpawnableShape getSpawnableShape(string name) {
         try {
-            return this.spawnableShapes["name"];
+            return this.spawnableShapes[name];
         }
         catch {
             return new SpawnableShape{};
@@ -145,41 +156,84 @@ public class ConnectionResources : NetworkBehaviour {
 
 
     private void initSpawnableObjects() {
+        Debug.Log("Starting Object list Init");
         foreach(GameObject prefab in this.spawnablePrefabs) {
            
            /**
            * Here you can add new handlers for new prefabs, take example from the case 'Player':
-           * prefab.name === Prefab name in the file / unity editor Ie. 'Player' (currently only prefab)
+           * prefab.name === Prefab name in the file / unity editor Ie. 'Player'
            * New prefabs need to be added to spawnablePrefabs both in this script and NetworkManager
            * This can be done by dragging the prefab to the arrays in Unity editor
            */
            SpawnableShape shape;
            switch(prefab.name) {
-               case "Player":
+                case "Triangle":
+                    shape = new SpawnableShape{
+                        prefab = prefab,
+                        hitpoints = 10, 
+                        movementspeed = 15, 
+                        maxMovementspeed = 19, 
+                        rotationspeed = 250f, 
+                        maxRotationspeed = 350f, 
+                        cooldown = 5 
+                    };
+                break;
+
+                case "Square":
+                    shape = new SpawnableShape{
+                        prefab = prefab,
+                        hitpoints = 15, 
+                        movementspeed = 11, 
+                        maxMovementspeed = 15, 
+                        rotationspeed = 200f, 
+                        maxRotationspeed = 300f, 
+                        cooldown = 8 
+                    };
+                break;
+
+                case "Pentagon":
+                    shape = new SpawnableShape{
+                        prefab = prefab,
+                        hitpoints = 20, 
+                        movementspeed = 7, 
+                        maxMovementspeed = 11, 
+                        rotationspeed = 150f, 
+                        maxRotationspeed = 250f, 
+                        cooldown = 11 
+                    };
+                break;
+
+                case "Octagon":
+                    shape = new SpawnableShape{
+                        prefab = prefab,
+                        hitpoints = 25, 
+                        movementspeed = 3, 
+                        maxMovementspeed = 7, 
+                        rotationspeed = 100f, 
+                        maxRotationspeed = 200f, 
+                        cooldown = 14 
+                    };
+                break;
+
+                default: //Default values we used during testing
                     shape = new SpawnableShape{
                         prefab = prefab, //Prefab comes from loop that we have defined to be 'Player' type
                         hitpoints = 10, //Set base hitpoints
                         movementspeed = 10, //Set base movementspeed
-                        rotationspeed = 360f //Set roationspeed
-                    };
-                    break;
-
-               default: //Default values we used during testing
-                    shape = new SpawnableShape{
-                        prefab = prefab,
-                        hitpoints = 10,
-                        movementspeed = 10, 
-                        rotationspeed = 90f, 
+                        maxMovementspeed = 15, //Set max movementspeed
+                        rotationspeed = 90f, //Set base rotationspeed
+                        maxRotationspeed = 150f, //Set max rotationspeed
+                        cooldown = 5 //Set spawn cooldown of this shape (in seconds)
                     };
                 break;
            }
 
            //Add to dictionary of spawnable objects
            this.spawnableShapes.Add(prefab.name, shape);
+           Debug.Log(prefab.name + " Init: " + this.getSpawnableShape(prefab.name).prefab);
         }
-
-        //Set spawnableObject Ie. waht spawn script will spawn next
-        this.setSpawnShape(this.spawnableShapes["Player"]);
+        //Set spawnableObject Ie. what spawn script will spawn next
+        this.setSpawnShape("Triangle");
     }
 
     /**
@@ -191,7 +245,10 @@ public class ConnectionResources : NetworkBehaviour {
         public GameObject prefab;
         public int hitpoints;
         public int movementspeed;
+        public int maxMovementspeed;
         public float rotationspeed;
+        public float maxRotationspeed;
+        public int cooldown;
         
     }
 

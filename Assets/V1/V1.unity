@@ -1054,6 +1054,10 @@ PrefabInstance:
       propertyPath: sceneId
       value: 1757500362
       objectReference: {fileID: 0}
+    - target: {fileID: 4506312897826481872, guid: 0b9c465eebc318540b549c5a60fcb60f, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5058452516016241037, guid: 0b9c465eebc318540b549c5a60fcb60f, type: 3}
       propertyPath: sceneId
       value: 4071956216

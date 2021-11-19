@@ -38,8 +38,44 @@ public class SpawnPoint : NetworkBehaviour {
             this.SpawnOnServer();
             this.lastCheck = Time.time;
         }
+
+        //This is ugly but unity can't fetch the currently pressed keycode for a switch-case :(
+        if(Input.GetKeyDown("1")) { 
+            this.SwapSpawnOnServer("Triangle");
+            Debug.Log(
+                "Current shape: " + cr.getSpawnShape().prefab + 
+                " | Current cd: " + cr.getSpawnCooldown()
+            );
+        }
+        else if(Input.GetKeyDown("2")) {
+            this.SwapSpawnOnServer("Square");
+            Debug.Log(
+                "Current shape: " + cr.getSpawnShape().prefab + 
+                " | Current cd: " + cr.getSpawnCooldown()
+            );
+        }
+        else if(Input.GetKeyDown("3")) {
+            this.SwapSpawnOnServer("Pentagon");
+            Debug.Log(
+                "Current shape: " + cr.getSpawnShape().prefab + 
+                " | Current cd: " + cr.getSpawnCooldown()
+            );
+        }
+        else if(Input.GetKeyDown("4")) {
+            this.SwapSpawnOnServer("Octagon");
+            Debug.Log(
+                "Current shape: " + cr.getSpawnShape().prefab + 
+                " | Current cd: " + cr.getSpawnCooldown()
+            );
+        }
+
     }
 
+    [Command]
+    public void SwapSpawnOnServer(string shapeName) {
+        bool result = GetComponent<ConnectionResources>().setSpawnShape(shapeName);
+        Debug.Log("Swapping spawn to " + shapeName + " - " + result);
+    } 
 
     [Command] //Command tag == This should be ran on the server, but the client commands it to do so
     public void SpawnOnServer() {
@@ -62,8 +98,8 @@ public class SpawnPoint : NetworkBehaviour {
 
             //Init default variables
             pr.initHitpoints(cr.getSpawnShape().hitpoints);
-            pr.initMovementSpeed(cr.getSpawnShape().movementspeed);
-            pr.initRotationSpeed(cr.getSpawnShape().rotationspeed);
+            pr.initMovementSpeed(cr.getSpawnShape().movementspeed, cr.getSpawnShape().maxMovementspeed);
+            pr.initRotationSpeed(cr.getSpawnShape().rotationspeed, cr.getSpawnShape().maxMovementspeed);
 
             //Give player object a reference to ConnectionResources
             pr.setConnectionResources(cr);
