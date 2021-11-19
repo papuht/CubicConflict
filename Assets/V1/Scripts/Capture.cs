@@ -4,12 +4,25 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
 
-public class Capture : NetworkBehaviour {
+public class Capture : NetworkBehaviour
+{
 
     [SyncVar] //[SyncVar] == Automatically keep this variable synced between clients
     public int counter1 = 0;
     [SyncVar]
     public int counter2 = 0;
+
+    [SyncVar]
+    public int player1 = 0;
+    [SyncVar]
+    public int player2 = 0;
+
+    [SyncVar]
+    public bool player1Control = false;
+    [SyncVar]
+    public bool player2Control = false;
+
+    //public GameObject cp;
 
     private int player1ID = 0; //Host is always 0
     private int player2ID = 0;
@@ -22,69 +35,127 @@ public class Capture : NetworkBehaviour {
     public Text player2Score;
 
     public override void OnStartClient() {
-        if(isServer) {
+        if (isServer) {
             player1Score.text = counter1.ToString();
             player2Score.text = counter2.ToString();
         }
     }
 
     void Update() {
+        if (isServer) {
+            Control();
+        }
         this.player1Score.text = counter1.ToString();
         this.player2Score.text = counter2.ToString();
     }
 
 
-    //The server method throws warnings when its called on clients
-    //Now we can check if caller is the server before calling the server only method
-    private void OnCollisionStay2D(Collision2D collision) { 
-        if(this.isServer) {
-            this.handleCounter(collision);
+    /*Called when block enters the capture point*/
+    [Server]
+    private void OnTriggerEnter2D(Collider2D collider) {
+        if (
+            this.isServer 
+            //Additional checks to avoid bugs
+            && collider.GetType() == typeof(PolygonCollider2D)
+            && collider.gameObject != null
+            && collider.gameObject.tag == "Player"
+        ) {
+            Debug.Log("CaptureDetect triggered: " + collider);
+            this.CaptureDetect(collider);
+        }
+    }
+
+    /*Called when block exits the capture point*/
+    [Server]
+    private void OnTriggerExit2D(Collider2D collider) {
+        if (
+            this.isServer
+            //Additional checks to avoid bugs
+            && collider.GetType() == typeof(PolygonCollider2D)
+            && collider.gameObject != null
+            && collider.gameObject.tag == "Player"
+        ) {
+            Debug.Log("ExitCounter triggered: " + collider);
+            this.ExitCounter(collider);
         }
     }
 
 
-    [Server] //[Server] == Run on server only, since we dont want clients to handle collision logic
-    private void handleCounter(Collision2D collision) {
-
-        //First check that collision is by a player object
-        if(collision.gameObject.tag == "Player") {
-
-            /*
-                This is a dirty fix but lets assume that the hostID is always 0 -> Player1
-                Then when capture detects another playerID it is set as player2 
-                This will work but maybe in the future is better to set the players when the game starts
-                and not dynamically like this
-            */
-
-            //Normal case of colliding with host ie. player1
-            if (
-                collision.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player1ID
-                && (Time.time - this.p1Check > 2)
-            ) {
-                counter1++;
-                this.p1Check = Time.time;
-            }
-            else if ( //Normal case of colliding with player2
-                collision.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player2ID
-                && (Time.time - this.p2Check > 2)
-                && player2ID != 0
-            ) {
-                counter2++;
-                this.p2Check = Time.time;
-            }
-            else if( //When a new ID is met save it as player2
-                this.player2ID == 0 
-                && (Time.time - this.p2Check > 2)
-                && collision.gameObject.GetComponent<PlayerResources>().getPlayerId() != 0
-            ) { 
-                this.player2ID = collision.gameObject.GetComponent<PlayerResources>().getPlayerId();
-                counter2++;
-                this.p2Check = Time.time;
-            }
-            
-
+    /* CaptureDetect() keeps track of blocks entering the area, which is recorded in to variables player1 and player2*/
+    [Server]
+    private void CaptureDetect(Collider2D collider) {
+        if ( //When a new ID is met save it as player2
+            this.player2ID == 0
+            && collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != 0 
+        ) {
+             this.player2ID = collider.gameObject.GetComponent<PlayerResources>().getPlayerId();
         }
         
+        if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player1ID){
+            player1++; 
+            Debug.Log("P1 enters the zone! | P1: " + player1 + " | P2: " + player2 + " |");
+        }
+        else if(collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player2ID) {
+            player2++;
+            Debug.Log("P2 enters the zone! | P1: " + player1 + " | P2: " + player2 + " |");
+        }
+    }
+
+    /*
+     * ExitCounter() keeps track of blocks leaving the capture point area in order to determine which player has supremacy
+     */
+    [Server]
+    private void ExitCounter(Collider2D collider) {
+        if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player1ID) {
+            if (player1 > 0) {
+                player1--;
+            }
+        }
+        else if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player2ID) {
+            if (player2 > 0) {
+                player2--;
+            }
+        }
+    }
+
+    /*
+    * Control() checks which player controls the capture point, and gives points to that player. Invoked once per Update()
+    */
+    [Server]
+    private void Control() {
+        if (player1 > player2) {
+            player1Control = true;
+            player2Control = false;
+
+        }
+        else if (player2 > player1) {
+
+            player2Control = true;
+            player1Control = false;
+
+        }
+        else if (player1 == player2) {
+            player2Control = false;
+            player1Control = false;
+
+        }
+
+        if (player1Control == true 
+            && Time.time - this.p1Check > 2
+        ) {
+            counter1++;
+            this.p1Check = Time.time;
+        }
+        else if(
+            player2Control == true 
+            && Time.time - this.p2Check > 2
+        ){
+            counter2++;
+            this.p2Check = Time.time;
+        }
     }
 
 }
+
+
+

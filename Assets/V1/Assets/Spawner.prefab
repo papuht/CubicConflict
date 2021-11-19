@@ -100,7 +100,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  player: {fileID: 831503909029019738, guid: d287d13c82cf3484cb340daa50c35636, type: 3}
 --- !u!114 &2866777490560262235
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,4 +161,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   spawnablePrefabs:
-  - {fileID: 831503909029019738, guid: d287d13c82cf3484cb340daa50c35636, type: 3}
+  - {fileID: 831503909029019738, guid: ff608343fbcd0e641af53396609b259b, type: 3}
+  - {fileID: 831503909029019738, guid: 3efcec6f57149ff46b819ccdd32655b9, type: 3}
+  - {fileID: 831503909029019738, guid: efd5e0a691e0fe54796123f9848a5cce, type: 3}
+  - {fileID: 831503909029019738, guid: 5665f3cf8ddd02348bc99de77fd60f81, type: 3}
