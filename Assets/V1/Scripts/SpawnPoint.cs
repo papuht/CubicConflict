@@ -99,7 +99,7 @@ public class SpawnPoint : NetworkBehaviour {
             //Init default variables
             pr.initHitpoints(cr.getSpawnShape().hitpoints);
             pr.initMovementSpeed(cr.getSpawnShape().movementspeed, cr.getSpawnShape().maxMovementspeed);
-            pr.initRotationSpeed(cr.getSpawnShape().rotationspeed, cr.getSpawnShape().maxMovementspeed);
+            pr.initRotationSpeed(cr.getSpawnShape().rotationspeed, cr.getSpawnShape().maxRotationspeed);
 
             //Give player object a reference to ConnectionResources
             pr.setConnectionResources(cr);
