@@ -26,16 +26,16 @@ public class PlayerResources : NetworkBehaviour {
     private int baseMovementspeed = 1;
 
     [SyncVar]
-    private int maxMovementspeed = 1;
+    private int maxMovementspeed = 50;
 
     [SyncVar]
-    private float rotationspeed = 10f;
+    private float rotationspeed = 1f;
 
     [SyncVar]
-    private float baseRotationspeed = 10f;
+    private float baseRotationspeed = 1f;
 
     [SyncVar]
-    private float maxRotationspeed = 10f;
+    private float maxRotationspeed = 1000f;
 
     [SyncVar]
     public ConnectionResources cr;
