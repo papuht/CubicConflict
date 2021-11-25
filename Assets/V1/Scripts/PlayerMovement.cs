@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class PlayerMovement : MonoBehaviour {
+public class PlayerMovement : NetworkBehaviour {
     private SelectionMap map;
     Dictionary<int, MovingObject> movingObjects = new Dictionary<int, MovingObject>();
     
+
     void Start() {
         this.map = GetComponent<SelectionMap>(); //Map of selected objects
     }
@@ -45,8 +47,9 @@ public class PlayerMovement : MonoBehaviour {
         //Stop movement of objects if 'S' is pressed
         if(Input.GetKeyUp(KeyCode.S)) {
 
+
             //On shift + s stop all movement
-            if(Input.GetKeyDown(KeyCode.LeftShift)) {
+            if (Input.GetKeyDown(KeyCode.LeftShift)) {
                 this.movingObjects.Clear();
             }
             else {//Stop movement of selected objects
@@ -57,7 +60,67 @@ public class PlayerMovement : MonoBehaviour {
                 }
             }
         }
-        
+
+        if(Input.GetKeyUp(KeyCode.Q))
+        {
+
+
+
+            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
+            {
+
+                 GameObject gm = entry.Value; 
+                
+                    gm.GetComponent<PlayerResources>().increaseRotationSpeed(7f);
+                    Debug.Log(gm.GetComponent<PlayerResources>().getRotationSpeed());
+
+
+                gm.GetComponent<PlayerResources>().reduceMovementSpeed(1);
+                Debug.Log(gm.GetComponent<PlayerResources>().getMovementSpeed());
+
+
+
+
+
+
+            }
+            
+
+
+
+
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            
+            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
+
+            {
+
+                GameObject gm = entry.Value;
+
+                gm.GetComponent<PlayerResources>().increaseMovementSpeed(1);
+                Debug.Log(gm.GetComponent<PlayerResources>().getRotationSpeed());
+
+
+                gm.GetComponent<PlayerResources>().reduceRotationSpeed(7f);
+                Debug.Log(gm.GetComponent<PlayerResources>().getMovementSpeed());
+
+
+
+            }
+
+
+
+
+        }
+
+
+
+
+
+
         //Go through moving objects and move them towards the destination
         //If movemenet returns false ie. gameobject is destroyed add it to be removed
         List<int> remove = new List<int>();

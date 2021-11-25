@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour {
     //Leaving variables public so they can be controlled from unity
     public float cameraSpeed; 
-    public float cameraMaxZoom = 20;
+    public float cameraMaxZoom = 30;
     public float cameraMinZoom = 10;
     public double moveOnTop;
     public double moveOnBottom;

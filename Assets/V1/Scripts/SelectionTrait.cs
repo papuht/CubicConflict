@@ -5,7 +5,7 @@ using UnityEngine;
 public class SelectionTrait : MonoBehaviour
 {
     void Start() {
-        GetComponentInChildren<SpriteRenderer>().material.color = Color.black;
+        GetComponentInChildren<SpriteRenderer>().material.color = Color.white;
     }
 
     private void OnDestroy() {
@@ -14,8 +14,8 @@ public class SelectionTrait : MonoBehaviour
     }
 
     public void refresh() {
-        if(GetComponentInChildren<SpriteRenderer>().material.color != Color.black) {
-            GetComponentInChildren<SpriteRenderer>().material.color = Color.black;
+        if(GetComponentInChildren<SpriteRenderer>().material.color != Color.white) {
+            GetComponentInChildren<SpriteRenderer>().material.color = Color.white;
         }
     }
 

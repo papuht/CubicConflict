@@ -26,10 +26,16 @@ public class PlayerResources : NetworkBehaviour {
     private int baseMovementspeed = 1;
 
     [SyncVar]
-    private float rotationspeed = 10f;
+    private int maxMovementspeed = 50;
 
     [SyncVar]
-    private float baseRotationspeed = 10f;
+    private float rotationspeed = 1f;
+
+    [SyncVar]
+    private float baseRotationspeed = 1f;
+
+    [SyncVar]
+    private float maxRotationspeed = 1000f;
 
     [SyncVar]
     public ConnectionResources cr;
@@ -115,6 +121,9 @@ public class PlayerResources : NetworkBehaviour {
     [Server]
     public void increaseHitpoints(int healAmount) {
         this.hitpoints = hitpoints + healAmount;
+        if(this.hitpoints > this.baseHitpoints) {
+            this.hitpoints = this.baseHitpoints;
+        }
     }
 
     public bool isDead() {
@@ -122,11 +131,10 @@ public class PlayerResources : NetworkBehaviour {
     }
 
     [Server] //Only use when spawning
-    public void initMovementSpeed(int ms) {
+    public void initMovementSpeed(int ms, int maxMs) {
         this.movementspeed = ms;
         this.baseMovementspeed = ms;
     }
-
 
     /**
     * Return the inited value of the variable
@@ -136,12 +144,23 @@ public class PlayerResources : NetworkBehaviour {
         return this.baseMovementspeed;
     }
 
+    /**
+    * Return the inited max value of the variable
+    * Value is automatically capped in setters
+    */
+    public int getMaxMovementSpeed() {
+        return this.baseMovementspeed;
+    }
+
     [Server]
     public void setMovementSpeed(int ms) {
         this.movementspeed = ms;
 
         if(this.movementspeed < 0) {
             this.movementspeed = 0;
+        }
+        else if(this.movementspeed > this.maxMovementspeed) {
+            this.movementspeed = this.maxMovementspeed;
         }
     }
 
@@ -161,12 +180,17 @@ public class PlayerResources : NetworkBehaviour {
     [Server]
     public void increaseMovementSpeed(int boostAmount) {
         this.movementspeed = movementspeed + boostAmount;
+
+        if(this.movementspeed > this.maxMovementspeed) {
+            this.movementspeed = this.maxMovementspeed;
+        }
     }
 
      [Server] //Only use when spawning
-    public void initRotationSpeed(float rs) {
+    public void initRotationSpeed(float rs, float maxRs) {
         this.rotationspeed= rs;
         this.baseRotationspeed = rs;
+        this.maxRotationspeed = maxRs;
     }
 
     /**
@@ -177,12 +201,23 @@ public class PlayerResources : NetworkBehaviour {
         return this.baseRotationspeed;
     }
 
+    /**
+    * Return the inited max value of the variable
+    * Value is automatically capped in setters
+    */
+    public float getMaxRotationSpeed() {
+        return this.baseMovementspeed;
+    }
+
     [Server]
     public void setRotationSpeed(float rs) {
         this.rotationspeed = rs;
 
         if(this.rotationspeed < 0f) {
             this.rotationspeed = 0f;
+        }
+        else if(this.rotationspeed > this.maxRotationspeed) {
+            this.rotationspeed = this.maxRotationspeed;
         }
     }
 
@@ -201,6 +236,10 @@ public class PlayerResources : NetworkBehaviour {
 
     [Server]
     public void increaseRotationSpeed(float boostAmount) {
-         this.rotationspeed = rotationspeed + boostAmount;
+        this.rotationspeed = rotationspeed + boostAmount;
+
+        if(this.rotationspeed > this.maxRotationspeed) {
+            this.rotationspeed = this.maxRotationspeed;
+        }
     }
 }
