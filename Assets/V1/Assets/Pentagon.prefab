@@ -86,7 +86,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66b09717f55228e4bafebeab96d4a566, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  degreesPerSec: 90
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &7098088096565674315
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,7 +103,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: d287d13c82cf3484cb340daa50c35636
+  m_AssetId: efd5e0a691e0fe54796123f9848a5cce
   hasSpawned: 0
 --- !u!114 &4634382699236213135
 MonoBehaviour:
@@ -206,6 +207,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  cr: {fileID: 0}
 --- !u!1 &4982493152186306220
 GameObject:
   m_ObjectHideFlags: 0
@@ -277,7 +279,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: 57ae67ebf2b5aed4aa4aae0c80b1bb95, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 00af73d3dcc7a36488963eb42fd6a2ee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
