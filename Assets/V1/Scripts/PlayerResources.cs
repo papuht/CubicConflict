@@ -40,6 +40,12 @@ public class PlayerResources : NetworkBehaviour {
     [SyncVar]
     public ConnectionResources cr;
 
+    [SyncVar]
+    public float dashTimer = 0f;
+    
+    [SyncVar]
+    public bool clearMovement;
+
     /**
     * All SyncVar settings have to happen on the server
     * Ie. You have to have Server rights when calling SET the methods
@@ -68,6 +74,15 @@ public class PlayerResources : NetworkBehaviour {
 
     public bool isOwner() {
         return this.hasAuthority;
+    }
+
+    public bool isMovementReset() {
+        return this.clearMovement;
+    }
+
+    [Server]
+    public void resetMovement(bool reset) {
+        this.clearMovement = reset;
     }
 
     [Server]
@@ -242,4 +257,17 @@ public class PlayerResources : NetworkBehaviour {
             this.rotationspeed = this.maxRotationspeed;
         }
     }
+
+    [Server]
+    public void resetDash() {
+        this.dashTimer = Time.time;
+    }
+
+    public bool isDashReady() {
+        if((Time.time - this.dashTimer) > 8) {
+            return true;
+        }
+        return false;
+    }
+
 }
