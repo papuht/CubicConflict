@@ -4,14 +4,117 @@ using Mirror;
 
 public class PlayerMovement : NetworkBehaviour {
     private SelectionMap map;
+
+    private float dashTimer;
+    private int dashCooldown = 8;
     Dictionary<int, MovingObject> movingObjects = new Dictionary<int, MovingObject>();
     
+    [Command]
+    public void CMDResetMovement(GameObject gm) {
+        gm.GetComponent<PlayerResources>().resetMovement(false);
+    }
+
+    [Command]
+    public void CMDIncreaseMovement(GameObject gm, int value) {
+        gm.GetComponent<PlayerResources>().increaseMovementSpeed(value);
+    }
+    [Command]
+    public void CMDDecreaseMovement(GameObject gm, int value) {
+        gm.GetComponent<PlayerResources>().reduceMovementSpeed(value);
+    }
+    [Command]
+    public void CMDIncreaseRotation(GameObject gm, float value) {
+        gm.GetComponent<PlayerResources>().increaseRotationSpeed(value);
+    }
+    [Command]
+    public void CMDDecreaseRotation(GameObject gm, float value) {
+        gm.GetComponent<PlayerResources>().reduceRotationSpeed(value);
+    }
+    [Command]
+    public void CMDResetDash(GameObject gm) {
+        gm.GetComponent<PlayerResources>().resetDash();
+    }
 
     void Start() {
         this.map = GetComponent<SelectionMap>(); //Map of selected objects
+        this.dashTimer = Time.time;
     }
 
+    
+    public override void OnStartClient() {
+        this.dashTimer = Time.time;
+    }   
+
     void Update() {
+
+        if(!isLocalPlayer) {
+            return;
+        }
+
+        //Dash the selected objects
+        if(Input.GetKeyUp(KeyCode.W)) {
+            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+                //Make sure GameObject still exists
+                if(entry.Value != null) {
+                    GameObject gm = entry.Value; 
+                    Vector2 mouse = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+                    float distance = gm.GetComponent<PlayerResources>().getMovementSpeed() / 2;
+
+                    //Try to dash
+                    if(gm.GetComponent<PlayerResources>().isDashReady()) {
+                        gm.transform.position = Vector2.MoveTowards( 
+                            gm.transform.position, 
+                            mouse, 
+                            distance
+                        );
+
+                        CMDResetDash(gm);
+
+                        //Change destination a little further than the mouse so that dashing feels more smooth
+                        if(
+                            //dashed
+                            this.movingObjects.ContainsKey(entry.Key) 
+                            && this.movingObjects[entry.Key] != null
+                        ) {
+                            this.movingObjects[entry.Key].destination = new Vector2(mouse.x * 1.2f, mouse.y + 1.2f);
+                        }
+                    }
+
+                }
+            }
+        }
+
+        //Increase rotation decrease movement
+        if(Input.GetKeyUp(KeyCode.Q)) {
+            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+                //Make sure GameObject still exists
+                if(entry.Value != null) {
+                    GameObject gm = entry.Value; 
+                    this.CMDIncreaseRotation(gm, 7f);
+                    this.CMDDecreaseMovement(gm, 1);
+                    Debug.Log(
+                        "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
+                        + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
+                    );                
+                }
+            }
+        }
+
+        //Increase rotation decrease movement
+        if (Input.GetKeyUp(KeyCode.E)) {
+            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+                //Make sure GameObject still exists
+                if(entry.Value != null) {
+                    GameObject gm = entry.Value;
+                    this.CMDIncreaseMovement(gm, 1);
+                    this.CMDDecreaseRotation(gm, 7f);
+                    Debug.Log(
+                        "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
+                        + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
+                    );
+                }
+            }
+        }
 
         //On mouse press save point and add all selected shapes into movemet group with said destination
         if(Input.GetMouseButtonUp(1)) {
@@ -20,15 +123,20 @@ public class PlayerMovement : NetworkBehaviour {
             foreach(KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
 
                 //Make sure GameObject still exists
-                if(entry.Value != null) {
+                if(entry.Value != null && entry.Value.gameObject != null) {
 
+                    //Clear forces when adding a new direction
+                    entry.Value.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                    entry.Value.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0f;
+
+                    Debug.Log("New movement registered: " + click);
                     //If object is already in the movement group, give it a new destination
                     if(this.movingObjects.ContainsKey(entry.Key) && this.movingObjects[entry.Key] != null) {
-                        Debug.Log("New destination for: " + entry.Value);
+                        //Debug.Log("New destination for: " + entry.Value);
                         this.movingObjects[entry.Key].destination = click;
                     }
                     else { //Add selected object to movement group
-                        Debug.Log("Adding to Movement group: " + entry.Value);
+                        //Debug.Log("Adding to Movement group: " + entry.Value);
 
                         this.movingObjects.Add(
                             entry.Key, 
@@ -47,7 +155,6 @@ public class PlayerMovement : NetworkBehaviour {
         //Stop movement of objects if 'S' is pressed
         if(Input.GetKeyUp(KeyCode.S)) {
 
-
             //On shift + s stop all movement
             if (Input.GetKeyDown(KeyCode.LeftShift)) {
                 this.movingObjects.Clear();
@@ -61,74 +168,21 @@ public class PlayerMovement : NetworkBehaviour {
             }
         }
 
-        if(Input.GetKeyUp(KeyCode.Q))
-        {
-
-
-
-            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
-            {
-
-                 GameObject gm = entry.Value; 
-                
-                    gm.GetComponent<PlayerResources>().increaseRotationSpeed(7f);
-                    Debug.Log(gm.GetComponent<PlayerResources>().getRotationSpeed());
-
-
-                gm.GetComponent<PlayerResources>().reduceMovementSpeed(1);
-                Debug.Log(gm.GetComponent<PlayerResources>().getMovementSpeed());
-
-
-
-
-
-
-            }
-            
-
-
-
-
-        }
-
-        if (Input.GetKeyUp(KeyCode.E))
-        {
-            
-            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
-
-            {
-
-                GameObject gm = entry.Value;
-
-                gm.GetComponent<PlayerResources>().increaseMovementSpeed(1);
-                Debug.Log(gm.GetComponent<PlayerResources>().getRotationSpeed());
-
-
-                gm.GetComponent<PlayerResources>().reduceRotationSpeed(7f);
-                Debug.Log(gm.GetComponent<PlayerResources>().getMovementSpeed());
-
-
-
-            }
-
-
-
-
-        }
-
-
-
-
-
-
         //Go through moving objects and move them towards the destination
         //If movemenet returns false ie. gameobject is destroyed add it to be removed
         List<int> remove = new List<int>();
         foreach(KeyValuePair<int, MovingObject> entry in this.movingObjects) {
-            if(entry.Value != null) {
+
+            if(entry.Value != null && entry.Value.gameObject) {
+
+                if(entry.Value.gameObject.GetComponent<PlayerResources>().isMovementReset()) {
+                    this.CMDResetMovement(entry.Value.gameObject);
+                    remove.Add(entry.Key);
+                }
 
                 //Try to move and add to be removed if it fails
                 if(!entry.Value.move()) { 
+                    this.CMDResetMovement(entry.Value.gameObject);
                     remove.Add(entry.Key);
                 }
 
@@ -164,7 +218,7 @@ public class PlayerMovement : NetworkBehaviour {
         public bool move() { 
 
             //Check if GameObject is Destroyed or the shape is stuck / has reached its destination
-            if(this.gameObject == null || this.isStuck()) {
+            if(this.gameObject == null || this.isStuck() || this.gameObject.GetComponent<PlayerResources>().isMovementReset()) {
                return false;
             }
 
