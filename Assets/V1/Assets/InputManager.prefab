@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3074a485b189ce9489d6edba146d228d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &1232404393983039699
 MonoBehaviour:
   m_ObjectHideFlags: 0
