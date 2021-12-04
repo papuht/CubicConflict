@@ -100,14 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  counter1: 0
-  counter2: 0
-  player1: 0
-  player2: 0
-  player1Control: 0
-  player2Control: 0
-  player1Score: {fileID: 0}
-  player2Score: {fileID: 0}
+  stateHandler: {fileID: 0}
 --- !u!114 &4857521175132832156
 MonoBehaviour:
   m_ObjectHideFlags: 0

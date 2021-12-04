@@ -23,10 +23,22 @@ public class GameStateHandler : NetworkBehaviour {
 
     public bool gg = false;
 
+    public GameObject capture;
+
     void Update() {
+
+        if(!this.isServer) {
+            return;
+        }
+
         if(!this.gg) {
-            this.player1Text.text = player1Score.ToString();
-            this.player2Text.text = player2Score.ToString();
+            if(this.player1Score > 0) {
+                RpcUpdateP1(this.player1Score.ToString());
+            }
+            
+            if(this.player2Score > 0) {
+                RpcUpdateP2(this.player2Score.ToString());
+            }
 
             if(this.player1Score >= 10) {
                 this.handleGameEnd("Player 1");
@@ -37,6 +49,25 @@ public class GameStateHandler : NetworkBehaviour {
                 this.gg = true;
             }
         }
+    }
+
+    [ClientRpc]
+    public void RpcUpdateP1(string s) {
+        this.player1Text.text = s;
+    }
+
+    [ClientRpc]
+    public void RpcUpdateP2(string s) {
+        this.player2Text.text = s;
+    }
+
+    [ClientRpc]
+    public void handleGameEnd(string winner) {
+        this.scoreContainer.GetComponent<Image>().enabled = false;
+        this.scoreText.enabled = false;
+        this.player1Text.enabled = false;
+        this.player2Text.enabled = false;
+        this.gameoverText.text = " GG & WP " + winner + " wins!";
     }
 
     override public void OnStartClient() {
@@ -59,14 +90,6 @@ public class GameStateHandler : NetworkBehaviour {
         
         Debug.Log("GAME STATE HANDLER INIT");
     } 
-
-    public void handleGameEnd(string winner) {
-        this.scoreContainer.GetComponent<Image>().enabled = false;
-        this.scoreText.enabled = false;
-        this.player1Text.enabled = false;
-        this.player2Text.enabled = false;
-        this.gameoverText.text = " GG & WP " + winner + " wins!";
-    }
 
     [Server]
     public void increasePlayer1Score() {
