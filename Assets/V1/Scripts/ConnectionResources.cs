@@ -152,6 +152,9 @@ public class ConnectionResources : NetworkBehaviour {
 
              this.initSpawnableObjects();
          }
+
+         //Fetch Camera and set it to our spawn
+        GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
      }
 
 

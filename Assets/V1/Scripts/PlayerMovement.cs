@@ -51,6 +51,11 @@ public class PlayerMovement : NetworkBehaviour {
             return;
         }
 
+        //On space send camera to spawn
+        if(Input.GetKeyUp(KeyCode.Space) && !Input.GetKey(KeyCode.LeftShift)) {
+            GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
+        }
+
         //Dash the selected objects
         if(Input.GetKeyUp(KeyCode.W)) {
             foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {

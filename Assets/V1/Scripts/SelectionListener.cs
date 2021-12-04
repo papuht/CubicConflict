@@ -84,7 +84,7 @@ public class SelectionListener : NetworkBehaviour {
                 //Create a box in the set 'center' with the set 'size' and see what colliders get hit by said box
                 RaycastHit2D[] casts = Physics2D.BoxCastAll(center,size, 0, Vector2.zero);
                 foreach(RaycastHit2D hit in casts) {
-                    if(hit.collider.GetType() == typeof(BoxCollider2D) && hit.collider.tag == "Player") {
+                    if(hit.collider.tag == "Player") {
                         if(hit.transform.gameObject.GetComponent<PlayerResources>().isOwner()) {
                             this.map.selectObject(hit.transform.gameObject);
                             Debug.Log("BoxCast: " + hit.collider);
