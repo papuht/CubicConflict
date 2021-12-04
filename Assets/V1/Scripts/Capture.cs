@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Capture : NetworkBehaviour {
 
-    private GameObject stateHandler;
+    public GameObject stateHandler;
 
     [SyncVar]
     private int player1 = 0;
@@ -31,14 +31,14 @@ public class Capture : NetworkBehaviour {
     }
 
     void Update() {
-        if (isServer) {
+        //if (isServer) {
             Control();
-        }
+        //}
     }
 
 
     /*Called when block enters the capture point*/
-    [Server]
+    //[Server]
     private void OnTriggerEnter2D(Collider2D collider) {
         if (
             this.isServer 
@@ -53,7 +53,7 @@ public class Capture : NetworkBehaviour {
     }
 
     /*Called when block exits the capture point*/
-    [Server]
+    //[Server]
     private void OnTriggerExit2D(Collider2D collider) {
         if (
             this.isServer
@@ -69,7 +69,7 @@ public class Capture : NetworkBehaviour {
 
 
     /* CaptureDetect() keeps track of blocks entering the area, which is recorded in to variables player1 and player2*/
-    [Server]
+    //[Server]
     private void CaptureDetect(Collider2D collider) {
         if ( //When a new ID is met save it as player2
             this.player2ID == 0
@@ -91,7 +91,7 @@ public class Capture : NetworkBehaviour {
     /*
      * ExitCounter() keeps track of blocks leaving the capture point area in order to determine which player has supremacy
      */
-    [Server]
+    //[Server]
     private void ExitCounter(Collider2D collider) {
         if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == this.player1ID) {
             if (player1 > 0) {
@@ -108,7 +108,7 @@ public class Capture : NetworkBehaviour {
     /*
     * Control() checks which player controls the capture point, and gives points to that player. Invoked once per Update()
     */
-    [Server]
+    //[Server]
     private void Control() {
         if (player1 > player2) {
             player1Control = true;
@@ -130,18 +130,30 @@ public class Capture : NetworkBehaviour {
         if (player1Control == true 
             && Time.time - this.p1Check > 2
         ) {
+            //CmdIncreaseP1(this.stateHandler);
             //TODO: counter1++;
-            this.stateHandler.GetComponent<GameStateHandler>().increasePlayer1Score();
+            //this.stateHandler.GetComponent<GameStateHandler>().increasePlayer1Score();
+            GameObject.Find("GameStateHandler").GetComponent<GameStateHandler>().increasePlayer1Score();
             this.p1Check = Time.time;
         }
         else if(
             player2Control == true 
             && Time.time - this.p2Check > 2
         ){
+            //CmdIncreaseP2(this.stateHandler);
             //TODO: counter2++;
             this.stateHandler.GetComponent<GameStateHandler>().increasePlayer2Score();
             this.p2Check = Time.time;
         }
+    }
+
+    
+    public void CmdIncreaseP1(GameObject gm) {
+       gm.GetComponent<GameStateHandler>().increasePlayer1Score();
+    }
+
+    public void CmdIncreaseP2(GameObject gm) {
+       gm.GetComponent<GameStateHandler>().increasePlayer2Score();
     }
 
     public void referenceGameStateHandler(GameObject reference) {
