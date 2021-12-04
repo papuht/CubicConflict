@@ -5,25 +5,40 @@ using UnityEngine;
 public class CameraController : MonoBehaviour {
     //Leaving variables public so they can be controlled from unity
     public float cameraSpeed; 
-    public float cameraMaxZoom = 30;
+    public float cameraMaxZoom = 25;
     public float cameraMinZoom = 10;
     public double moveOnTop;
     public double moveOnBottom;
     public double moveOnLeft;
     public double moveOnRight;
-    private bool pause = true; //Start camera paused
-    
+    private bool pause = false;
+
+    private Vector2 minLimits;
+    private Vector2 maxLimits;
+
     void Start() {
-        this.cameraSpeed = 20;
+        this.cameraSpeed = 30;
         this.moveOnTop = Screen.height * 0.97; //Top 3% of the screen
         this.moveOnBottom = Screen.height * 0.03; //Bottom 3% of the screen
         this.moveOnRight = Screen.width * 0.97; //Right 3% of the screen
         this.moveOnLeft = Screen.width * 0.03; //Left 3% of the screen
+
+        //Min bounds for camera
+        this.minLimits = new Vector2(
+            GameObject.Find("MinX").GetComponent<Collider2D>().bounds.max.x, //Walls of the map
+            GameObject.Find("MinY").GetComponent<Collider2D>().bounds.max.y
+        );
+
+        //Max bounds for camera
+        this.maxLimits = new Vector2(
+            GameObject.Find("MaxX").GetComponent<Collider2D>().bounds.min.x,
+            GameObject.Find("MaxY").GetComponent<Collider2D>().bounds.min.y
+        );
     }   
 
     void Update() {
         //Pause camera with space since its annoying while developing
-        if(Input.GetKeyDown(KeyCode.Space)) {
+        if(Input.GetKeyUp(KeyCode.Space) && Input.GetKey(KeyCode.LeftShift)) {
           this.toggleCameraPause();
         }
 
@@ -32,6 +47,8 @@ public class CameraController : MonoBehaviour {
         }
 
         this.handleCameraZoom();
+
+        this.correctCamera();
     }
 
     private void handleCameraZoom() {
@@ -52,6 +69,7 @@ public class CameraController : MonoBehaviour {
             Debug.Log("Camera zoomed in");
             camera.orthographicSize += 1;
         }
+
     }
 
     private void handleCameraScroll() {
@@ -74,6 +92,27 @@ public class CameraController : MonoBehaviour {
         else if(cameraPos.y <= this.moveOnBottom) {
             transform.Translate(Vector3.down * multiplier, Space.World);
         }
+    }
+
+    private void correctCamera() {
+
+        GameObject cam = this.gameObject;
+
+        if(cam.transform.position.z != -20f) {
+            Debug.Log("z error");
+            cam.transform.position = new Vector3(cam.transform.position.x, cam.transform.position.y, -20f);
+        }
+
+        //Calculate camera the height and width based on screen size
+        float halfHeight = Camera.main.orthographicSize;
+        float halfWidth = halfHeight * Screen.width / Screen.height;
+        
+        //Clamp camera to calculated limits
+        cam.transform.position = new Vector3(
+            Mathf.Clamp(cam.transform.position.x, this.minLimits.x + halfWidth, this.maxLimits.x - halfWidth),
+            Mathf.Clamp(cam.transform.position.y, this.minLimits.y + halfHeight, this.maxLimits.y - halfHeight),
+            cam.transform.position.z
+        );
     }
 
     public bool toggleCameraPause() {

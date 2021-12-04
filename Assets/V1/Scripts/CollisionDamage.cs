@@ -5,6 +5,8 @@ using Mirror;
 
 public class CollisionDamage : NetworkBehaviour {
 
+    public Collider2D hitCollider;
+
     private void OnCollisionEnter2D(Collision2D collision) { 
         Collider2D collider1 = collision.collider;
         Collider2D collider2 = collision.otherCollider;
@@ -34,10 +36,7 @@ public class CollisionDamage : NetworkBehaviour {
                 enemyObject = collider1;
             }
 
-            if ( 
-                enemyObject.GetType() == typeof(BoxCollider2D)
-                && myObject.GetType() == typeof(PolygonCollider2D)
-            )
+            if (myObject == this.hitCollider)
             {
                 //Handle collision and add a collision force
                 CMDReduceHp(myObject.gameObject, 1);

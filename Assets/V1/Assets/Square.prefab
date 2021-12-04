@@ -75,6 +75,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  hitCollider: {fileID: 6892421943644925397}
 --- !u!114 &-1391034996192251581
 MonoBehaviour:
   m_ObjectHideFlags: 0

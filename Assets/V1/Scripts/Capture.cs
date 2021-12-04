@@ -4,23 +4,19 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.UI;
 
-public class Capture : NetworkBehaviour
-{
+public class Capture : NetworkBehaviour {
 
-    [SyncVar] //[SyncVar] == Automatically keep this variable synced between clients
-    public int counter1 = 0;
-    [SyncVar]
-    public int counter2 = 0;
+    private GameObject stateHandler;
 
     [SyncVar]
-    public int player1 = 0;
+    private int player1 = 0;
     [SyncVar]
-    public int player2 = 0;
+    private int player2 = 0;
 
     [SyncVar]
-    public bool player1Control = false;
+    private bool player1Control = false;
     [SyncVar]
-    public bool player2Control = false;
+    private bool player2Control = false;
 
     //public GameObject cp;
 
@@ -30,23 +26,14 @@ public class Capture : NetworkBehaviour
     private float p1Check = 0;
     private float p2Check = 0;
 
-    public Text player1Score;
-
-    public Text player2Score;
-
-    public override void OnStartClient() {
-        if (isServer) {
-            player1Score.text = counter1.ToString();
-            player2Score.text = counter2.ToString();
-        }
+    public override void OnStartServer() { 
+        Debug.Log("CapturePoint INIT");
     }
 
     void Update() {
         if (isServer) {
             Control();
         }
-        this.player1Score.text = counter1.ToString();
-        this.player2Score.text = counter2.ToString();
     }
 
 
@@ -143,16 +130,22 @@ public class Capture : NetworkBehaviour
         if (player1Control == true 
             && Time.time - this.p1Check > 2
         ) {
-            counter1++;
+            //TODO: counter1++;
+            this.stateHandler.GetComponent<GameStateHandler>().increasePlayer1Score();
             this.p1Check = Time.time;
         }
         else if(
             player2Control == true 
             && Time.time - this.p2Check > 2
         ){
-            counter2++;
+            //TODO: counter2++;
+            this.stateHandler.GetComponent<GameStateHandler>().increasePlayer2Score();
             this.p2Check = Time.time;
         }
+    }
+
+    public void referenceGameStateHandler(GameObject reference) {
+        this.stateHandler = reference;
     }
 
 }
