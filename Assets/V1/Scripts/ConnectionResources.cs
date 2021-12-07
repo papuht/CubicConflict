@@ -171,38 +171,41 @@ public class ConnectionResources : NetworkBehaviour {
            SpawnableShape shape;
            switch(prefab.name) {
                 case "Triangle":
-                    shape = new SpawnableShape{
+                    shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 10, 
-                        movementspeed = 15, 
-                        maxMovementspeed = 19, 
-                        rotationspeed = 250f, 
-                        maxRotationspeed = 350f, 
-                        cooldown = 5 
+                        hitpoints = 10,
+                        movementspeed = 15,
+                        maxMovementspeed = 19,
+                        rotationspeed = 250f,
+                        maxRotationspeed = 350f,
+                        cooldown = 5,
+                        name = "Triangle"
                     };
                 break;
 
                 case "Square":
-                    shape = new SpawnableShape{
+                    shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 15, 
-                        movementspeed = 11, 
-                        maxMovementspeed = 15, 
-                        rotationspeed = 200f, 
-                        maxRotationspeed = 300f, 
-                        cooldown = 8 
+                        hitpoints = 15,
+                        movementspeed = 11,
+                        maxMovementspeed = 15,
+                        rotationspeed = 200f,
+                        maxRotationspeed = 300f,
+                        cooldown = 8,
+                        name = "Square"
                     };
                 break;
 
                 case "Pentagon":
-                    shape = new SpawnableShape{
+                    shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 20, 
-                        movementspeed = 7, 
-                        maxMovementspeed = 11, 
-                        rotationspeed = 150f, 
-                        maxRotationspeed = 250f, 
-                        cooldown = 11 
+                        hitpoints = 20,
+                        movementspeed = 7,
+                        maxMovementspeed = 11,
+                        rotationspeed = 150f,
+                        maxRotationspeed = 250f,
+                        cooldown = 11,
+                        name = "Pentagon"
                     };
                 break;
 
@@ -214,19 +217,21 @@ public class ConnectionResources : NetworkBehaviour {
                         maxMovementspeed = 7, 
                         rotationspeed = 100f, 
                         maxRotationspeed = 200f, 
-                        cooldown = 14 
+                        cooldown = 14,
+                        name = "Hexagon"
                     };
                 break;
 
                 default: //Default values we used during testing
-                    shape = new SpawnableShape{
+                    shape = new SpawnableShape {
                         prefab = prefab, //Prefab comes from loop that we have defined to be 'Player' type
                         hitpoints = 10, //Set base hitpoints
                         movementspeed = 10, //Set base movementspeed
                         maxMovementspeed = 15, //Set max movementspeed
                         rotationspeed = 90f, //Set base rotationspeed
                         maxRotationspeed = 150f, //Set max rotationspeed
-                        cooldown = 5 //Set spawn cooldown of this shape (in seconds)
+                        cooldown = 5, //Set spawn cooldown of this shape (in seconds)
+                        name = "Default"
                     };
                 break;
            }
@@ -252,6 +257,7 @@ public class ConnectionResources : NetworkBehaviour {
         public float rotationspeed;
         public float maxRotationspeed;
         public int cooldown;
+        public string name;
         
     }
 
