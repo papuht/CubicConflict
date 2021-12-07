@@ -10,8 +10,8 @@ public class SoundManagerScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        crackSound = Sounds.load<AudioClip> ("Crack.mp3");
-        thudSound = Sounds.load<AudioClip> ("Thud.mp3");
+        crackSound = Resources.Load<AudioClip> ("Crack");
+        thudSound = Resources.Load<AudioClip> ("Thud");
         audioSrc = GetComponent<AudioSource> ();
     }
 
