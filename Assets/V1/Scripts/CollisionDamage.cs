@@ -42,9 +42,11 @@ public class CollisionDamage : NetworkBehaviour {
                 CMDReduceHp(myObject.gameObject, 1);
                 if (myObject.gameObject.GetComponent<PlayerResources>().isDead())
                 {
+                    SoundManagerScript.PlaySound ("Crack");
                     CMDDestroy(myObject.gameObject);
                 }
                 else {
+                    SoundManagerScript.PlaySound ("Thud");
                     float avgMs = (
                     myObject.gameObject.GetComponent<PlayerResources>().getMovementSpeed()
                     + enemyObject.gameObject.GetComponent<PlayerResources>().getMovementSpeed()
