@@ -7,6 +7,8 @@ public class PlayerResources : NetworkBehaviour {
         this.setSpriteColor(this.color);
     }
 
+    private SyncDictionary<string, string> storage = new SyncDictionary<string, string>();
+
     [SyncVar]
     private int id = -1;
 
@@ -56,6 +58,32 @@ public class PlayerResources : NetworkBehaviour {
 
     public int getPlayerId() {
         return this.id;
+    }
+
+
+    //MAKE SURE TO DELETE VALUES SAVED TO STORAGE
+    public string getAndDeleteFromStorage(string key) {
+       string re = ""; 
+       if(this.storage.TryGetValue(key, out re)) {
+           this.storage.Remove(key);
+           return re;
+       }
+       return "";
+    }
+
+    //MAKE SURE TO DELETE VALUES SAVED TO STORAGE
+    public string getFromStorage(string key) {
+       string re = ""; 
+       if(this.storage.TryGetValue(key, out re)) {
+           return re;
+       }
+       return "";
+
+    }
+
+    [Server] //STORAGE IS FOR TEMPORARY VARIABLES, DELETE ON USE!
+    public void addToStorage(string key, string value) {
+       this.storage.Add(key, value);
     }
 
     public ConnectionResources getConnectionResources() {
@@ -149,6 +177,7 @@ public class PlayerResources : NetworkBehaviour {
     public void initMovementSpeed(int ms, int maxMs) {
         this.movementspeed = ms;
         this.baseMovementspeed = ms;
+        this.maxMovementspeed = maxMs;
     }
 
     /**

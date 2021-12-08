@@ -21,20 +21,22 @@ public class UI : MonoBehaviour
         hpText = GameObject.Find("Hitpoints");
         dashCooldown = GameObject.Find("DashCd");
         spawnNext = GameObject.Find("NextSpawn");
-        hpText.GetComponent<Text>().enabled = false;
-        dashCooldown.GetComponent<Text>().enabled = false;
+        hpText.GetComponent<Text>().text = "Hitpoints: -";
+        dashCooldown.GetComponent<Text>().color = Color.blue;
+        dashCooldown.GetComponent<Text>().text = "Select Units..";
+        GameObject.Find("SpawnTimer").GetComponent<Text>().text = "";
         selectionMap = GetComponent<SelectionMap>();
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if (selectionMap.getSelectedObjects().Count() >= 1)
         {
             hpText.GetComponent<Text>().enabled = true;
             dashCooldown.GetComponent<Text>().enabled = true;
             int temp = 0;
-            dashCooldown.GetComponent<Text>().text = "Dash is not available";
+            dashCooldown.GetComponent<Text>().color = Color.red;
+            dashCooldown.GetComponent<Text>().text = "Dash in cooldown";
             foreach (KeyValuePair<int, GameObject> entry in this.selectionMap.getSelectedObjects())
             {
                 if (entry.Value != null)
@@ -42,17 +44,19 @@ public class UI : MonoBehaviour
                     temp = temp + entry.Value.GetComponent<PlayerResources>().getHitpoints();
                     if (entry.Value.GetComponent<PlayerResources>().isDashReady())
                     {
-                        dashCooldown.GetComponent<Text>().text = "Dash is available";
+                        dashCooldown.GetComponent<Text>().color = Color.green;
+                        dashCooldown.GetComponent<Text>().text = "Dash is available.";
                     }
                 }
 
             }
-            hpText.GetComponent<Text>().text = "Hitpoints " + temp.ToString();
+            hpText.GetComponent<Text>().text = "Hitpoints: " + temp.ToString();
         }
         else
         {
-            hpText.GetComponent<Text>().enabled = false;
-            dashCooldown.GetComponent<Text>().enabled = false;
+            hpText.GetComponent<Text>().text = "Hitpoints: -";
+            dashCooldown.GetComponent<Text>().color = Color.blue;
+            dashCooldown.GetComponent<Text>().text = "Select Units..";
         }
 
         spawnNext.GetComponent<Text>().text = "Spawning: " + GetComponent<ConnectionResources>().getSpawnShape().name;

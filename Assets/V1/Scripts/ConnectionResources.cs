@@ -148,7 +148,7 @@ public class ConnectionResources : NetworkBehaviour {
              }
 
              this.spawnCooldown = 10;
-             this.ready = true;
+             this.ready = false;
 
              this.initSpawnableObjects();
          }
@@ -175,7 +175,7 @@ public class ConnectionResources : NetworkBehaviour {
                         prefab = prefab,
                         hitpoints = 10,
                         movementspeed = 15,
-                        maxMovementspeed = 19,
+                        maxMovementspeed = 20,
                         rotationspeed = 250f,
                         maxRotationspeed = 350f,
                         cooldown = 5,
@@ -188,7 +188,7 @@ public class ConnectionResources : NetworkBehaviour {
                         prefab = prefab,
                         hitpoints = 15,
                         movementspeed = 11,
-                        maxMovementspeed = 15,
+                        maxMovementspeed = 16,
                         rotationspeed = 200f,
                         maxRotationspeed = 300f,
                         cooldown = 8,
@@ -201,7 +201,7 @@ public class ConnectionResources : NetworkBehaviour {
                         prefab = prefab,
                         hitpoints = 20,
                         movementspeed = 7,
-                        maxMovementspeed = 11,
+                        maxMovementspeed = 12,
                         rotationspeed = 150f,
                         maxRotationspeed = 250f,
                         cooldown = 11,
@@ -214,7 +214,7 @@ public class ConnectionResources : NetworkBehaviour {
                         prefab = prefab,
                         hitpoints = 25, 
                         movementspeed = 3, 
-                        maxMovementspeed = 7, 
+                        maxMovementspeed = 8, 
                         rotationspeed = 100f, 
                         maxRotationspeed = 200f, 
                         cooldown = 14,
