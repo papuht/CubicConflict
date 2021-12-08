@@ -95,8 +95,10 @@ public class PlayerMovement : NetworkBehaviour {
                 //Make sure GameObject still exists
                 if(entry.Value != null) {
                     GameObject gm = entry.Value; 
-                    this.CMDIncreaseRotation(gm, 7f);
-                    this.CMDDecreaseMovement(gm, 1);
+                    if(gm.GetComponent<PlayerResources>().getBaseMovementSpeed() - 5 < (gm.GetComponent<PlayerResources>().getMovementSpeed() - 1)) {
+                        this.CMDDecreaseMovement(gm, 1);
+                    }
+                    this.CMDIncreaseRotation(gm, 20f);
                     Debug.Log(
                         "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
                         + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
@@ -112,7 +114,9 @@ public class PlayerMovement : NetworkBehaviour {
                 if(entry.Value != null) {
                     GameObject gm = entry.Value;
                     this.CMDIncreaseMovement(gm, 1);
-                    this.CMDDecreaseRotation(gm, 7f);
+                    if(gm.GetComponent<PlayerResources>().getBaseRotationSpeed() - 100 < (gm.GetComponent<PlayerResources>().getRotationSpeed() - 20f)) {
+                        this.CMDDecreaseRotation(gm, 20f);
+                    }
                     Debug.Log(
                         "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
                         + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
@@ -147,8 +151,7 @@ public class PlayerMovement : NetworkBehaviour {
                             entry.Key, 
                             new MovingObject(
                                 entry.Value, 
-                                click, 
-                                entry.Value.GetComponent<PlayerResources>().getMovementSpeed()
+                                click
                             )
                         );
                         
@@ -212,10 +215,9 @@ public class PlayerMovement : NetworkBehaviour {
 
         //Store ms data for each object to future proof different ms for different shapes
         public float movementSpeed; 
-        public MovingObject(GameObject gameObject, Vector2 destination, float movementSpeed) {
+        public MovingObject(GameObject gameObject, Vector2 destination) {
             this.gameObject = gameObject;
             this.destination = destination;
-            this.movementSpeed = movementSpeed;
             this.previousCheck = Time.time;
         }
 
@@ -232,7 +234,7 @@ public class PlayerMovement : NetworkBehaviour {
             this.gameObject.transform.position = Vector2.MoveTowards(
                 this.gameObject.transform.position,
                 this.destination, 
-                (this.movementSpeed * Time.deltaTime)
+                (this.gameObject.GetComponent<PlayerResources>().getMovementSpeed() * Time.deltaTime)
             );
 
             return true;

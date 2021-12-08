@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 //Note: classes that call network functions need NetworkBehaviour instead of MonoBehaviour
 public class SpawnPoint : NetworkBehaviour { 
@@ -34,6 +36,9 @@ public class SpawnPoint : NetworkBehaviour {
             return;
         }
 
+        //A seperate UI update here since we need the accurate CD for it
+        GameObject.Find("SpawnTimer").GetComponent<Text>().text = Convert.ToInt32((cr.getSpawnCooldown() - (Time.time - this.lastCheck))).ToString();
+        
         if ((Time.time - this.lastCheck) > cr.getSpawnCooldown()) {
             this.SpawnOnServer();
             this.lastCheck = Time.time;

@@ -40,11 +40,11 @@ public class GameStateHandler : NetworkBehaviour {
                 RpcUpdateP2(this.player2Score.ToString());
             }
 
-            if(this.player1Score >= 10) {
+            if(this.player1Score >= 100) {
                 this.handleGameEnd("Player 1");
                 this.gg = true;
             }
-            else if(this.player2Score >= 10) {
+            else if(this.player2Score >= 100) {
                 this.handleGameEnd("Player 2");
                 this.gg = true;
             }
