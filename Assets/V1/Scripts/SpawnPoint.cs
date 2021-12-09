@@ -17,6 +17,8 @@ public class SpawnPoint : NetworkBehaviour {
 
     private double lastCheck;
 
+    private bool started = false;
+
     public void resetTimer() {
         this.lastCheck = Time.time;
     }
@@ -35,6 +37,11 @@ public class SpawnPoint : NetworkBehaviour {
         if(!cr.isReady()) {
             return;
         }
+        else if(!started) {
+            GetComponent<AudioSource>().Play();
+            GameObject.Find("GameStartText").GetComponent<Text>().enabled = false;
+            this.started = true;
+        }
 
         //A seperate UI update here since we need the accurate CD for it
         GameObject.Find("SpawnTimer").GetComponent<Text>().text = Convert.ToInt32((cr.getSpawnCooldown() - (Time.time - this.lastCheck))).ToString();
@@ -51,6 +58,7 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Triangle";
         }
         else if(Input.GetKeyDown("2")) {
             this.SwapSpawnOnServer("Square");
@@ -58,6 +66,7 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Square";
         }
         else if(Input.GetKeyDown("3")) {
             this.SwapSpawnOnServer("Pentagon");
@@ -65,6 +74,7 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Pentagon";
         }
         else if(Input.GetKeyDown("4")) {
             this.SwapSpawnOnServer("Octagon");

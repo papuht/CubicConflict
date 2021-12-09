@@ -4,8 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 using System;
+using Mirror;
 
-public class UI : MonoBehaviour
+public class UI : NetworkBehaviour
 {
 
     public GameObject hpText;
@@ -30,6 +31,10 @@ public class UI : MonoBehaviour
 
     // Update is called once per frame
     void Update() {
+        if(!this.isClient) {
+            return;
+        }
+
         if (selectionMap.getSelectedObjects().Count() >= 1)
         {
             hpText.GetComponent<Text>().enabled = true;
@@ -58,8 +63,6 @@ public class UI : MonoBehaviour
             dashCooldown.GetComponent<Text>().color = Color.blue;
             dashCooldown.GetComponent<Text>().text = "Select Units..";
         }
-
-        spawnNext.GetComponent<Text>().text = "Spawning: " + GetComponent<ConnectionResources>().getSpawnShape().name;
 
     }
 }

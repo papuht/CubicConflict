@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System.Linq;
+using UnityEngine.UI;
 
 public class ConnectionResources : NetworkBehaviour {
 
@@ -120,7 +121,7 @@ public class ConnectionResources : NetworkBehaviour {
         if(!hasAuthority) {
             return;
         }
-
+        Debug.Log(GameObject.Find("GameStartText").GetComponent<Text>().enabled);
         if(!this.ready) {
             this.isGameReady();
             return;
