@@ -187,7 +187,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Square":
                     shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 15,
+                        hitpoints = 30,
                         movementspeed = 11,
                         maxMovementspeed = 16,
                         rotationspeed = 200f,
@@ -200,7 +200,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Pentagon":
                     shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 20,
+                        hitpoints = 40,
                         movementspeed = 7,
                         maxMovementspeed = 12,
                         rotationspeed = 150f,
@@ -213,7 +213,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Octagon":
                     shape = new SpawnableShape{
                         prefab = prefab,
-                        hitpoints = 25, 
+                        hitpoints = 50, 
                         movementspeed = 3, 
                         maxMovementspeed = 8, 
                         rotationspeed = 100f, 

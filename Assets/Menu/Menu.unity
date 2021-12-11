@@ -1541,10 +1541,13 @@ MonoBehaviour:
     First one
     to get 100 points wins
 
-    Hotkeys: W to dash, 30 second cd per unit
+    Hotkeys: W to dash, Q and E to control
 
-    1,2,3,4
-    to change the type of unit to produce'
+    1,2,3
+    to change the type of unit to produce
+
+    Bigger shapes are costly, but more
+    beefy'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
