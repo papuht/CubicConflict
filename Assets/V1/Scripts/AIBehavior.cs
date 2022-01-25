@@ -61,7 +61,7 @@ public class AIBehavior : MonoBehaviour
         }
         else {
 
-            navmesh.destination = capture.transform.position;
+            //navmesh.destination = capture.transform.position;
         
         }
         
@@ -85,11 +85,14 @@ public class AIBehavior : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
+        if (this.isIdle == true)
         {
-            toggleIdleStatus(false);
-            navmesh.destination = collider.gameObject.transform.position;
+            if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
+            {
+                toggleIdleStatus(false);
+                //navmesh.destination = collider.gameObject.transform.position;
 
+            }
         }
 
     }
@@ -98,11 +101,13 @@ public class AIBehavior : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collider)
     {
-
-        if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
+        if (this.isIdle == true)
         {
-            toggleIdleStatus(false);
-            navmesh.destination = collider.gameObject.transform.position;
+            if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
+            {
+                toggleIdleStatus(false);
+                // tähän tulee se movement-jutska jahka ehdin tehdä sen;
+            }
         }
 
     }
@@ -113,13 +118,13 @@ public class AIBehavior : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collider)
     {
+       
+            if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
+            {
+                toggleIdleStatus(true);
 
-        if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
-        {
-            toggleIdleStatus(true);
-            
-        }
-
+            }
+        
     }
 
 

@@ -327,3 +327,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c18f22b8dcfcc94f8d8eea75f3b12f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AIspawnObject: {fileID: 1109357926822270125, guid: 7942ba1f8bd1c4443987b5b1b6135cc5, type: 3}

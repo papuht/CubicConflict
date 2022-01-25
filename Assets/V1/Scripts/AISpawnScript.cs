@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AISpawnScript : MonoBehaviour
 {
-    GameObject spawningShape;
+    public GameObject AIspawnObject;
     private double lastCheck;
 
     public void resetTimer()
@@ -33,14 +33,13 @@ public class AISpawnScript : MonoBehaviour
 
     public void Spawn() {
 
-        ConnectionResources cr = this.GetComponent<ConnectionResources>();
-        GameObject spawnablePlayer = Instantiate(
-               cr.getSpawnShape().prefab,
+       GameObject.Instantiate(
+               AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().prefab,
                GetComponent<ConnectionResources>().getSpawnPosition(),
                Quaternion.identity
            );
 
-        PlayerResources pr = spawnablePlayer.GetComponent<PlayerResources>();
+        PlayerResources pr = AIspawnObject.GetComponent<PlayerResources>();
 
         //Set a unique id that we can compare on collision istead of tags
         pr.setPlayerId(666);
@@ -49,14 +48,14 @@ public class AISpawnScript : MonoBehaviour
         pr.setColor(GetComponent<ConnectionResources>().p2TeamColors[Random.Range(0, this.GetComponent<ConnectionResources>().p2TeamColors.Length)]);
 
         //Init default variables
-        pr.initHitpoints(cr.getSpawnShape().hitpoints);
-        pr.initMovementSpeed(cr.getSpawnShape().movementspeed, cr.getSpawnShape().maxMovementspeed);
-        pr.initRotationSpeed(cr.getSpawnShape().rotationspeed, cr.getSpawnShape().maxRotationspeed);
+        pr.initHitpoints(AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().hitpoints);
+        pr.initMovementSpeed(AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().movementspeed, AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().maxMovementspeed);
+        pr.initRotationSpeed(AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().rotationspeed, AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().maxRotationspeed);
 
         //Give player object a reference to ConnectionResources
-        pr.setConnectionResources(cr);
+        
 
-        cr.addToPlayerObjects(spawnablePlayer);
+       
 
 
     }
