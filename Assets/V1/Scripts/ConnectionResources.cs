@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class ConnectionResources : NetworkBehaviour {
 
-    Color[] p1TeamColors = new Color[] {Color.blue};
-    Color[] p2TeamColors = new Color[] {Color.red};
+    public Color[] p1TeamColors = new Color[] {Color.blue};
+    public Color[] p2TeamColors = new Color[] {Color.red};
 
     private int playerId;
 
@@ -36,6 +36,8 @@ public class ConnectionResources : NetworkBehaviour {
 
     [SyncVar]
     private bool ready;
+
+    private bool singlePlayerMode = false;
 
     public SpawnableShape getSpawnShape() {
         return this.spawnShape;
