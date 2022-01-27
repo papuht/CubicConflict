@@ -41,6 +41,8 @@ public class ConnectionHandler : MonoBehaviour {
     private string connectWithCode;
     private string connectWithIP;
 
+    private bool singleplayer;
+
     void Start() {
         this.hostBtn.onClick.AddListener(StartHost);
         this.hostBackBtn.onClick.AddListener(stopHost);
@@ -65,6 +67,23 @@ public class ConnectionHandler : MonoBehaviour {
         this.showClientContainer(false);
         this.showHostContainer(false);
         this.showConnectionContainer(false);
+
+        this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
+        if(singleplayer) {
+            startSinglePlayer();
+        }
+    }
+
+    public void startSinglePlayer() {
+        this.StartHost();
+
+        this.connectToCode = "-";
+
+        this.player1ConnectionText.color = Color.green;
+        this.player1ConnectionText.text = "Player 1: Ready (Host)";
+
+        this.player2ConnectionText.color = Color.green;
+        this.player2ConnectionText.text = "Player 2: Ready (AI)";
     }
 
     public void setConnectionError(string msg) {
@@ -121,8 +140,10 @@ public class ConnectionHandler : MonoBehaviour {
 
         //Thread this action since it takes a bit to ping the website
         (new Thread(() => {
-            string ip = this.getIP();
-            this.connectToCode = this.encodeIP(ip);
+            if(!this.singleplayer) {
+                string ip = this.getIP();
+                this.connectToCode = this.encodeIP(ip);
+            }
         })).Start();
 
 		NetworkManager.singleton.StartHost();

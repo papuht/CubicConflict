@@ -85,6 +85,8 @@ public class ConnectionResources : NetworkBehaviour {
         this.spawnCooldown = cd;
     }
 
+    private bool singleplayer = false;
+
     public bool isReady() {
         return this.ready;
     }
@@ -124,7 +126,15 @@ public class ConnectionResources : NetworkBehaviour {
         return this.gameObject.transform.position;
     }
 
-    void Start() {}
+    void Start() {
+        //Handle local singleplayer
+        this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
+        if(this.singleplayer) {
+            this.initCountdown = true;
+            this.countdown = 25;
+            this.countdownCheck = Time.time;
+        }
+    }
     
     void Update() {
         if(!hasAuthority) {
