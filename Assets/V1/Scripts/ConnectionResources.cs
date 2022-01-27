@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System.Linq;
+using System;
 using UnityEngine.UI;
 
 public class ConnectionResources : NetworkBehaviour {
@@ -38,6 +39,12 @@ public class ConnectionResources : NetworkBehaviour {
     private bool ready;
 
     private bool singlePlayerMode = false;
+    [SyncVar]
+    private bool initCountdown;
+    [SyncVar]
+    private double countdown;
+
+    private double countdownCheck;
 
     public SpawnableShape getSpawnShape() {
         return this.spawnShape;
@@ -123,19 +130,74 @@ public class ConnectionResources : NetworkBehaviour {
         if(!hasAuthority) {
             return;
         }
-        Debug.Log(GameObject.Find("GameStartText").GetComponent<Text>().enabled);
         if(!this.ready) {
             this.isGameReady();
             return;
         }
+        
+        
     }
 
     [Command]
     private void isGameReady() {
-        if(NetworkServer.connections.Count >= 2) {
-            this.ready = true;
-            this.GetComponent<SpawnPoint>().resetTimer();
+        if(!this.initCountdown && NetworkServer.connections.Count >= 2) {
+            this.readyConnectionUI();
+            this.initCountdown = true;
+            this.countdown = 20;
+            this.countdownCheck = Time.time;
         }
+        if(this.initCountdown) {
+            this.countdown -= (Time.time - this.countdownCheck);
+            this.countdownCheck = Time.time;
+
+            this.handleCountdownUI();
+            
+            Debug.Log(Convert.ToInt32(this.countdown).ToString());
+            if(this.countdown <= 0) {
+                this.ready = true;
+                this.initCountdown = false;
+                
+                this.handleCountdownEnd();
+            } 
+        }
+    }
+
+    [ClientRpc]
+    private void handleCountdownUI() {
+        if(GameObject.Find("StartCountdown") != null) {
+            Text hostText = GameObject.Find("StartCountdown").GetComponent<Text>();
+            hostText.text = "> " + Convert.ToInt32(this.countdown).ToString() + " <";
+        }
+    }
+
+     [ClientRpc]
+    private void handleCountdownEnd() {
+        this.GetComponent<SpawnPoint>().resetTimer();
+        if(GameObject.Find("ConnectionMainContainer") != null) {
+            GameObject.Find("ConnectionMainContainer").SetActive(false);
+        }
+    }
+
+    [ClientRpc]
+    private void readyConnectionUI() {
+
+        if(GameObject.Find("HostConnectionStatus") != null) {
+            Text hostText = GameObject.Find("HostConnectionStatus").GetComponent<Text>();
+            hostText.color = Color.green;
+            hostText.text = "Player 1: Ready (Host)";
+        }
+
+        if(GameObject.Find("ClientConnectionStatus") != null) {
+            Text clientText = GameObject.Find("ClientConnectionStatus").GetComponent<Text>();
+            clientText.color = Color.green;
+            clientText.text = "Player 2: Ready (Client)";
+        }
+
+        if(GameObject.Find("ClientStatusText") != null) {
+            Text clientStatus = GameObject.Find("ClientStatusText").GetComponent<Text>();
+            clientStatus.text = clientStatus.text.Replace("Connecting to", "Connected to");
+        }
+        
     }
 
     public override void OnStartClient() {
@@ -144,14 +206,15 @@ public class ConnectionResources : NetworkBehaviour {
              this.playerId = connectionToClient.connectionId;
 
              if(connectionToClient.connectionId == 0) {
-                this.teamColor = this.p1TeamColors[Random.Range(0, this.p1TeamColors.Length)];
+                this.teamColor = this.p1TeamColors[UnityEngine.Random.Range(0, this.p1TeamColors.Length)];
              }
              else {
-                 this.teamColor = this.p2TeamColors[Random.Range(0, this.p2TeamColors.Length)];
+                this.teamColor = this.p2TeamColors[UnityEngine.Random.Range(0, this.p2TeamColors.Length)];
              }
 
              this.spawnCooldown = 10;
              this.ready = false;
+             this.initCountdown = false;
 
              this.initSpawnableObjects();
          }
