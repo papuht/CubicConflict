@@ -205,7 +205,7 @@ public class PlayerMovement : NetworkBehaviour {
     }
 
     //A sub-class to store the info of moving objects, much easier to handle than a double dictionary
-    private class MovingObject {
+    public class MovingObject {
         public GameObject gameObject;
         public Vector2 destination;
         public Vector2 previousPosition;

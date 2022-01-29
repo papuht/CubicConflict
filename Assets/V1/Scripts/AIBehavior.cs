@@ -8,7 +8,7 @@ public class AIBehavior : MonoBehaviour
     private bool isIdle;
     public GameObject ai;
     public GameObject capture;
-    public NavMeshAgent navmesh; 
+     
 
 
 
@@ -18,7 +18,7 @@ public class AIBehavior : MonoBehaviour
     void Start()
     {
 
-        navmesh = GetComponent<NavMeshAgent>();
+        
 
         
     }
@@ -61,8 +61,9 @@ public class AIBehavior : MonoBehaviour
         }
         else {
 
-            //navmesh.destination = capture.transform.position;
-        
+            Vector2 destination = capture.transform.position;
+            Movement(destination);
+
         }
         
     }
@@ -90,7 +91,8 @@ public class AIBehavior : MonoBehaviour
             if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
             {
                 toggleIdleStatus(false);
-                //navmesh.destination = collider.gameObject.transform.position;
+                Vector2 destination = collider.transform.position;
+                Movement(destination);
 
             }
         }
@@ -106,7 +108,9 @@ public class AIBehavior : MonoBehaviour
             if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
             {
                 toggleIdleStatus(false);
-                // tähän tulee se movement-jutska jahka ehdin tehdä sen;
+                Vector2 destination = collider.transform.position;
+                Movement(destination);
+                
             }
         }
 
@@ -122,9 +126,23 @@ public class AIBehavior : MonoBehaviour
             if (collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != ai.gameObject.GetComponent<PlayerResources>().getPlayerId())
             {
                 toggleIdleStatus(true);
+                Vector2 destination = capture.transform.position;
+                Movement(destination);
 
-            }
+        }
         
+    }
+
+
+    /* method for moving AI pawns*/
+    private void Movement(Vector2 destination) {
+
+
+
+        PlayerMovement.MovingObject move = new PlayerMovement.MovingObject(ai, destination);
+        move.move();
+    
+    
     }
 
 
