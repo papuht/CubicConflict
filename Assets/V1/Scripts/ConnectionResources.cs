@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using System.Linq;
+using System;
 using UnityEngine.UI;
 
 public class ConnectionResources : NetworkBehaviour {
 
-    Color[] p1TeamColors = new Color[] {Color.blue};
-    Color[] p2TeamColors = new Color[] {Color.red};
+    public Color[] p1TeamColors = new Color[] {Color.blue};
+    public Color[] p2TeamColors = new Color[] {Color.red};
 
-    private int playerId;
+    public GameObject aiSpawner;
+
+    protected int playerId;
 
     /**
     * Shape prehabs can be dragged here from unity editor
@@ -20,22 +23,30 @@ public class ConnectionResources : NetworkBehaviour {
     public GameObject[] spawnablePrefabs;
 
     //Store all shapes that have been inited for spawning
-    private Dictionary<string, SpawnableShape> spawnableShapes = new Dictionary<string, SpawnableShape>();
+    protected Dictionary<string, SpawnableShape> spawnableShapes = new Dictionary<string, SpawnableShape>();
 
     //Store all the shapes that a player currently has
-    private SyncList<GameObject> objectPool = new SyncList<GameObject>();
+    protected SyncList<GameObject> objectPool = new SyncList<GameObject>();
 
     [SyncVar]
-    private SpawnableShape spawnShape;
+    protected SpawnableShape spawnShape;
 
     [SyncVar]
-    private Color teamColor;
+    protected Color teamColor;
 
     [SyncVar]
-    private int spawnCooldown;
+    protected int spawnCooldown;
 
     [SyncVar]
-    private bool ready;
+    protected bool ready;
+
+    [SyncVar]
+    protected bool initCountdown;
+    
+    [SyncVar]
+    protected double countdown;
+
+    protected double countdownCheck;
 
     public SpawnableShape getSpawnShape() {
         return this.spawnShape;
@@ -76,7 +87,9 @@ public class ConnectionResources : NetworkBehaviour {
         this.spawnCooldown = cd;
     }
 
-    public bool isReady() {
+    protected bool singleplayer = false;
+
+    public virtual bool isReady() {
         return this.ready;
     }
     
@@ -115,13 +128,23 @@ public class ConnectionResources : NetworkBehaviour {
         return this.gameObject.transform.position;
     }
 
-    void Start() {}
+    protected virtual void Start() {
+        //Handle local singleplayer
+        this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
+        if(this.singleplayer) {
+            this.initCountdown = true;
+            this.countdown = 5;
+            this.countdownCheck = Time.time;
+
+            Debug.Log(this.aiSpawner);
+            this.spawnAI();
+        }
+    }
     
-    void Update() {
+    protected virtual void Update() {
         if(!hasAuthority) {
             return;
         }
-        Debug.Log(GameObject.Find("GameStartText").GetComponent<Text>().enabled);
         if(!this.ready) {
             this.isGameReady();
             return;
@@ -129,11 +152,82 @@ public class ConnectionResources : NetworkBehaviour {
     }
 
     [Command]
-    private void isGameReady() {
-        if(NetworkServer.connections.Count >= 2) {
-            this.ready = true;
-            this.GetComponent<SpawnPoint>().resetTimer();
+    public void spawnAI() {
+        //Spawn AISpawner
+        GameObject aiPlayer = Instantiate(
+            this.aiSpawner,
+            new Vector2(
+                -1 * this.gameObject.transform.position.x, 
+                -1 * this.gameObject.transform.position.y
+            ),
+            Quaternion.identity
+        );
+
+        NetworkServer.Spawn(aiPlayer, connectionToClient); 
+
+        //Init AI ConnectionResources
+        aiPlayer.GetComponent<AIResources>().initAI(this);
+    }
+
+    [Command]
+    protected void isGameReady() {
+        if(!this.initCountdown && NetworkServer.connections.Count >= 2) {
+            this.readyConnectionUI();
+            this.initCountdown = true;
+            this.countdown = 20;
+            this.countdownCheck = Time.time;
         }
+        if(this.initCountdown) {
+            this.countdown -= (Time.time - this.countdownCheck);
+            this.countdownCheck = Time.time;
+
+            this.handleCountdownUI();
+            
+            if(this.countdown <= 0) {
+                this.ready = true;
+                this.initCountdown = false;
+                
+                this.handleCountdownEnd();
+            } 
+        }
+    }
+
+    [ClientRpc]
+    protected void handleCountdownUI() {
+        if(GameObject.Find("StartCountdown") != null) {
+            Text hostText = GameObject.Find("StartCountdown").GetComponent<Text>();
+            hostText.text = "> " + Convert.ToInt32(this.countdown).ToString() + " <";
+        }
+    }
+
+     [ClientRpc]
+    protected void handleCountdownEnd() {
+        this.GetComponent<SpawnPoint>().resetTimer();
+        if(GameObject.Find("ConnectionMainContainer") != null) {
+            GameObject.Find("ConnectionMainContainer").SetActive(false);
+        }
+    }
+
+    [ClientRpc]
+    protected void readyConnectionUI() {
+
+        if(GameObject.Find("HostConnectionStatus") != null) {
+            Text hostText = GameObject.Find("HostConnectionStatus").GetComponent<Text>();
+            hostText.color = Color.green;
+            hostText.text = "Player 1: Ready (Host)";
+        }
+
+        if(GameObject.Find("ClientConnectionStatus") != null) {
+            Text clientText = GameObject.Find("ClientConnectionStatus").GetComponent<Text>();
+            clientText.color = Color.green;
+            clientText.text = "Player 2: Ready (Client)";
+        }
+
+        if(GameObject.Find("ClientStatusText") != null) {
+            Text clientStatus = GameObject.Find("ClientStatusText").GetComponent<Text>();
+            clientStatus.text = clientStatus.text.Replace("Connecting to", "Connected to");
+        }
+        
     }
 
     public override void OnStartClient() {
@@ -142,14 +236,15 @@ public class ConnectionResources : NetworkBehaviour {
              this.playerId = connectionToClient.connectionId;
 
              if(connectionToClient.connectionId == 0) {
-                this.teamColor = this.p1TeamColors[Random.Range(0, this.p1TeamColors.Length)];
+                this.teamColor = this.p1TeamColors[UnityEngine.Random.Range(0, this.p1TeamColors.Length)];
              }
              else {
-                 this.teamColor = this.p2TeamColors[Random.Range(0, this.p2TeamColors.Length)];
+                this.teamColor = this.p2TeamColors[UnityEngine.Random.Range(0, this.p2TeamColors.Length)];
              }
 
              this.spawnCooldown = 10;
              this.ready = false;
+             this.initCountdown = false;
 
              this.initSpawnableObjects();
          }
@@ -159,7 +254,7 @@ public class ConnectionResources : NetworkBehaviour {
      }
 
 
-    private void initSpawnableObjects() {
+    protected void initSpawnableObjects() {
         Debug.Log("Starting Object list Init");
         foreach(GameObject prefab in this.spawnablePrefabs) {
            

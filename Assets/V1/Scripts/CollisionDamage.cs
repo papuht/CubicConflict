@@ -36,8 +36,25 @@ public class CollisionDamage : NetworkBehaviour {
                 enemyObject = collider1;
             }
 
-            if (myObject == this.hitCollider)
-            {
+            //Handle singleplayer collisions that cant rely on authority
+            if(
+                collider1.gameObject.GetComponent<PlayerResources>().getPlayerId() == 666 
+                || collider2.gameObject.GetComponent<PlayerResources>().getPlayerId() == 666 
+            ) {
+                if(collider1 != this.hitCollider) {
+                    Debug.Log(collider1.gameObject.GetComponent<PlayerResources>().getPlayerId());
+                    myObject = collider1;
+                }
+                else {
+                    Debug.Log(collider2.gameObject.GetComponent<PlayerResources>().getPlayerId());
+                    myObject = collider2;
+                }
+            }
+
+            if (
+                myObject == this.hitCollider 
+                || (enemyObject == this.hitCollider )
+            ) {
                 //Handle collision and add a collision force
                 CMDReduceHp(myObject.gameObject, 1);
                 if (myObject.gameObject.GetComponent<PlayerResources>().isDead())

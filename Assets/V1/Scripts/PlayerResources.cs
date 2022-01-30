@@ -48,6 +48,9 @@ public class PlayerResources : NetworkBehaviour {
     [SyncVar]
     public bool clearMovement;
 
+    [SyncVar]
+    public bool isAI = false;
+
     /**
     * All SyncVar settings have to happen on the server
     * Ie. You have to have Server rights when calling SET the methods
@@ -99,6 +102,16 @@ public class PlayerResources : NetworkBehaviour {
     public void setPlayerId(int playerId) {
         this.id = playerId;
     }
+
+    /*[Server]
+    public void setPlayerId(int playerId) {
+        this.id = playerId;
+    }
+
+    [Server]
+    public bool isAI() {
+        return this.isAI;
+    }*/
 
     public bool isOwner() {
         return this.hasAuthority;
