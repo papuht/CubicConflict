@@ -38,9 +38,9 @@ public class ConnectionResources : NetworkBehaviour {
     [SyncVar]
     private bool ready;
 
-    private bool singlePlayerMode = false;
     [SyncVar]
     private bool initCountdown;
+    
     [SyncVar]
     private double countdown;
 
