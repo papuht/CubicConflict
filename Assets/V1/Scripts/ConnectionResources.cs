@@ -89,7 +89,7 @@ public class ConnectionResources : NetworkBehaviour {
 
     protected bool singleplayer = false;
 
-    public bool isReady() {
+    public virtual bool isReady() {
         return this.ready;
     }
     
@@ -128,7 +128,7 @@ public class ConnectionResources : NetworkBehaviour {
         return this.gameObject.transform.position;
     }
 
-    protected void Start() {
+    protected virtual void Start() {
         //Handle local singleplayer
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
         if(this.singleplayer) {
@@ -141,7 +141,7 @@ public class ConnectionResources : NetworkBehaviour {
         }
     }
     
-    protected void Update() {
+    protected virtual void Update() {
         if(!hasAuthority) {
             return;
         }

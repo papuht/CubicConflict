@@ -6,21 +6,22 @@ public class AISpawnScript : NetworkBehaviour
 {
     private double lastCheck;
 
-    public void resetTimer()
-    {
+    public void resetTimer() {
         this.lastCheck = Time.time;
     }
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         this.lastCheck = Time.time;
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         ConnectionResources cr = this.GetComponent<AIResources>();
+
+        if(!cr.isReady()) {
+            return;
+        }
 
         if ((Time.time - this.lastCheck) > cr.getSpawnCooldown())
         {

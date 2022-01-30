@@ -31,18 +31,19 @@ public class AIResources : ConnectionResources {
         this.initAiShapes();
 
         this.playerId = 666;
-        base.teamColor = this.p2TeamColors[UnityEngine.Random.Range(0, this.p2TeamColors.Length)];
+        this.teamColor = this.p2TeamColors[UnityEngine.Random.Range(0, this.p2TeamColors.Length)];
     }
 
     //An example of relying on the player ConnectionResources for syncing
-    new public bool isReady() {
+    //Note: Overriding methods in C# requires the parent method to be declared 'virtual'
+    public override bool isReady() {
         return syncResources.isReady();
     }
 
     //Override On start function so nothing silly happens
-    new void Start() {}
+    protected override void Start() {}
 
-    new void Update() {}
+    protected override void Update() {}
 
     public override void OnStartClient() {}
 
