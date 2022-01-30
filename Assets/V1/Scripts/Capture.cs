@@ -65,6 +65,7 @@ public class Capture : NetworkBehaviour {
 
     /* CaptureDetect() keeps track of blocks entering the area, which is recorded in to variables player1 and player2*/
     private void CaptureDetect(Collider2D collider) {
+        Debug.Log(collider.gameObject.GetComponent<PlayerResources>().getPlayerId());
         if ( //When a new ID is met save it as player2
             this.player2ID == 0
             && collider.gameObject.GetComponent<PlayerResources>().getPlayerId() != 0 

@@ -11,7 +11,9 @@ public class ConnectionResources : NetworkBehaviour {
     public Color[] p1TeamColors = new Color[] {Color.blue};
     public Color[] p2TeamColors = new Color[] {Color.red};
 
-    private int playerId;
+    public GameObject aiSpawner;
+
+    protected int playerId;
 
     /**
     * Shape prehabs can be dragged here from unity editor
@@ -21,30 +23,30 @@ public class ConnectionResources : NetworkBehaviour {
     public GameObject[] spawnablePrefabs;
 
     //Store all shapes that have been inited for spawning
-    private Dictionary<string, SpawnableShape> spawnableShapes = new Dictionary<string, SpawnableShape>();
+    protected Dictionary<string, SpawnableShape> spawnableShapes = new Dictionary<string, SpawnableShape>();
 
     //Store all the shapes that a player currently has
-    private SyncList<GameObject> objectPool = new SyncList<GameObject>();
+    protected SyncList<GameObject> objectPool = new SyncList<GameObject>();
 
     [SyncVar]
-    private SpawnableShape spawnShape;
+    protected SpawnableShape spawnShape;
 
     [SyncVar]
-    private Color teamColor;
+    protected Color teamColor;
 
     [SyncVar]
-    private int spawnCooldown;
+    protected int spawnCooldown;
 
     [SyncVar]
-    private bool ready;
+    protected bool ready;
 
     [SyncVar]
-    private bool initCountdown;
+    protected bool initCountdown;
     
     [SyncVar]
-    private double countdown;
+    protected double countdown;
 
-    private double countdownCheck;
+    protected double countdownCheck;
 
     public SpawnableShape getSpawnShape() {
         return this.spawnShape;
@@ -85,7 +87,7 @@ public class ConnectionResources : NetworkBehaviour {
         this.spawnCooldown = cd;
     }
 
-    private bool singleplayer = false;
+    protected bool singleplayer = false;
 
     public bool isReady() {
         return this.ready;
@@ -126,17 +128,20 @@ public class ConnectionResources : NetworkBehaviour {
         return this.gameObject.transform.position;
     }
 
-    void Start() {
+    protected void Start() {
         //Handle local singleplayer
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
         if(this.singleplayer) {
             this.initCountdown = true;
-            this.countdown = 25;
+            this.countdown = 5;
             this.countdownCheck = Time.time;
+
+            Debug.Log(this.aiSpawner);
+            this.spawnAI();
         }
     }
     
-    void Update() {
+    protected void Update() {
         if(!hasAuthority) {
             return;
         }
@@ -144,12 +149,28 @@ public class ConnectionResources : NetworkBehaviour {
             this.isGameReady();
             return;
         }
-        
-        
     }
 
     [Command]
-    private void isGameReady() {
+    public void spawnAI() {
+        //Spawn AISpawner
+        GameObject aiPlayer = Instantiate(
+            this.aiSpawner,
+            new Vector2(
+                -1 * this.gameObject.transform.position.x, 
+                -1 * this.gameObject.transform.position.y
+            ),
+            Quaternion.identity
+        );
+
+        NetworkServer.Spawn(aiPlayer, connectionToClient); 
+
+        //Init AI ConnectionResources
+        aiPlayer.GetComponent<AIResources>().initAI(this);
+    }
+
+    [Command]
+    protected void isGameReady() {
         if(!this.initCountdown && NetworkServer.connections.Count >= 2) {
             this.readyConnectionUI();
             this.initCountdown = true;
@@ -162,7 +183,6 @@ public class ConnectionResources : NetworkBehaviour {
 
             this.handleCountdownUI();
             
-            Debug.Log(Convert.ToInt32(this.countdown).ToString());
             if(this.countdown <= 0) {
                 this.ready = true;
                 this.initCountdown = false;
@@ -173,7 +193,7 @@ public class ConnectionResources : NetworkBehaviour {
     }
 
     [ClientRpc]
-    private void handleCountdownUI() {
+    protected void handleCountdownUI() {
         if(GameObject.Find("StartCountdown") != null) {
             Text hostText = GameObject.Find("StartCountdown").GetComponent<Text>();
             hostText.text = "> " + Convert.ToInt32(this.countdown).ToString() + " <";
@@ -181,7 +201,7 @@ public class ConnectionResources : NetworkBehaviour {
     }
 
      [ClientRpc]
-    private void handleCountdownEnd() {
+    protected void handleCountdownEnd() {
         this.GetComponent<SpawnPoint>().resetTimer();
         if(GameObject.Find("ConnectionMainContainer") != null) {
             GameObject.Find("ConnectionMainContainer").SetActive(false);
@@ -189,7 +209,7 @@ public class ConnectionResources : NetworkBehaviour {
     }
 
     [ClientRpc]
-    private void readyConnectionUI() {
+    protected void readyConnectionUI() {
 
         if(GameObject.Find("HostConnectionStatus") != null) {
             Text hostText = GameObject.Find("HostConnectionStatus").GetComponent<Text>();
@@ -234,7 +254,7 @@ public class ConnectionResources : NetworkBehaviour {
      }
 
 
-    private void initSpawnableObjects() {
+    protected void initSpawnableObjects() {
         Debug.Log("Starting Object list Init");
         foreach(GameObject prefab in this.spawnablePrefabs) {
            

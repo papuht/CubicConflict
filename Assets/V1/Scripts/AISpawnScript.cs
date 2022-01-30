@@ -1,10 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class AISpawnScript : MonoBehaviour
+using Mirror;
+public class AISpawnScript : NetworkBehaviour
 {
-    public GameObject AIspawnObject;
     private double lastCheck;
 
     public void resetTimer()
@@ -21,7 +20,7 @@ public class AISpawnScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ConnectionResources cr = this.GetComponent<ConnectionResources>();
+        ConnectionResources cr = this.GetComponent<AIResources>();
 
         if ((Time.time - this.lastCheck) > cr.getSpawnCooldown())
         {
@@ -30,33 +29,35 @@ public class AISpawnScript : MonoBehaviour
         }
     }
 
-
+    [Command]
     public void Spawn() {
 
-       GameObject.Instantiate(
-               AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().prefab,
-               GetComponent<ConnectionResources>().getSpawnPosition(),
-               Quaternion.identity
-           );
+        //Note reference to AIResources
+        ConnectionResources cr = GetComponent<AIResources>();
 
-        PlayerResources pr = AIspawnObject.GetComponent<PlayerResources>();
+        GameObject spawnablePlayer = Instantiate(
+            cr.getSpawnShape().prefab,
+            cr.getSpawnPosition(),
+            Quaternion.identity
+        );
+
+        PlayerResources pr = spawnablePlayer.GetComponent<PlayerResources>();
 
         //Set a unique id that we can compare on collision istead of tags
-        pr.setPlayerId(666);
+        pr.setPlayerId(cr.getPlayerId());
 
         //Set color to object
-        pr.setColor(GetComponent<ConnectionResources>().p2TeamColors[Random.Range(0, this.GetComponent<ConnectionResources>().p2TeamColors.Length)]);
+        pr.setColor(cr.getTeamColor());
 
         //Init default variables
-        pr.initHitpoints(AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().hitpoints);
-        pr.initMovementSpeed(AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().movementspeed, AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().maxMovementspeed);
-        pr.initRotationSpeed(AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().rotationspeed, AIspawnObject.GetComponent<ConnectionResources>().getSpawnShape().maxRotationspeed);
+        pr.initHitpoints(cr.getSpawnShape().hitpoints);
+        pr.initMovementSpeed(cr.getSpawnShape().movementspeed, cr.getSpawnShape().maxMovementspeed);
+        pr.initRotationSpeed(cr.getSpawnShape().rotationspeed, cr.getSpawnShape().maxRotationspeed);
 
         //Give player object a reference to ConnectionResources
-        
+        pr.setConnectionResources(cr);
+        cr.addToPlayerObjects(spawnablePlayer);
 
-       
-
-
+        NetworkServer.Spawn(spawnablePlayer, connectionToClient); 
     }
 }
