@@ -224,7 +224,7 @@ public class ConnectionResources : NetworkBehaviour {
         }
 
         if(GameObject.Find("ClientStatusText") != null) {
-            Text clientStatus = GameObject.Find("ClientStatusText").GetComponent<Text>();
+            Text clientStatus = GameObject.Find("ClientStatusHeader").GetComponent<Text>();
             clientStatus.text = clientStatus.text.Replace("Connecting to", "Connected to");
         }
         
