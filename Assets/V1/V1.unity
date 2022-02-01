@@ -4473,6 +4473,30 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1429506837}
   m_CullTransparentMesh: 1
+--- !u!1 &1437852010 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4469849181770561230, guid: 4c86c90e8ed29034895650732f0a514d, type: 3}
+  m_PrefabInstance: {fileID: 4469849183495414723}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1437852013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437852010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61b93ff779f4ef84da855aef42076949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Channels: 0200000001000000
+  Timeout: 25
+  SteamAppID: 480
+  AllowSteamRelay: 1
+  UseNextGenSteamNetworking: 1
+  InitFacepunch: 1
+  SteamUserID: 0
 --- !u!1 &1438590550
 GameObject:
   m_ObjectHideFlags: 0
@@ -7050,6 +7074,10 @@ PrefabInstance:
       propertyPath: capture
       value: 
       objectReference: {fileID: 4857521175132832145, guid: 0b9c465eebc318540b549c5a60fcb60f, type: 3}
+    - target: {fileID: 4469849181770561229, guid: 4c86c90e8ed29034895650732f0a514d, type: 3}
+      propertyPath: transport
+      value: 
+      objectReference: {fileID: 1437852013}
     - target: {fileID: 4469849181770561229, guid: 4c86c90e8ed29034895650732f0a514d, type: 3}
       propertyPath: gameStateHandler
       value: 
