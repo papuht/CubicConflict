@@ -131,12 +131,12 @@ public class ConnectionResources : NetworkBehaviour {
     protected virtual void Start() {
         //Handle local singleplayer
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
+
         if(this.singleplayer) {
             this.initCountdown = true;
             this.countdown = 5;
             this.countdownCheck = Time.time;
 
-            Debug.Log(this.aiSpawner);
             this.spawnAI();
         }
     }
