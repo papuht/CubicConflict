@@ -22,9 +22,9 @@ public class UI : NetworkBehaviour
         hpText = GameObject.Find("Hitpoints");
         dashCooldown = GameObject.Find("DashCd");
         spawnNext = GameObject.Find("NextSpawn");
-        hpText.GetComponent<Text>().text = "Hitpoints: -";
+        hpText.GetComponent<Text>().text = "";
         dashCooldown.GetComponent<Text>().color = Color.blue;
-        dashCooldown.GetComponent<Text>().text = "Select Units..";
+        dashCooldown.GetComponent<Text>().text = "No units selected!";
         GameObject.Find("SpawnTimer").GetComponent<Text>().text = "";
         selectionMap = GetComponent<SelectionMap>();
     }
@@ -59,9 +59,9 @@ public class UI : NetworkBehaviour
         }
         else
         {
-            hpText.GetComponent<Text>().text = "Hitpoints: -";
+            hpText.GetComponent<Text>().text = "";
             dashCooldown.GetComponent<Text>().color = Color.blue;
-            dashCooldown.GetComponent<Text>().text = "Select Units..";
+            dashCooldown.GetComponent<Text>().text = "No units selected";
         }
 
     }
