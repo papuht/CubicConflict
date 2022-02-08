@@ -39,7 +39,6 @@ public class SpawnPoint : NetworkBehaviour {
         }
         else if(!started) {
             GetComponent<AudioSource>().Play();
-            GameObject.Find("GameStartText").GetComponent<Text>().enabled = false;
             this.started = true;
         }
 
