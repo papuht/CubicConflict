@@ -11,27 +11,45 @@ public class PlayerMovement : NetworkBehaviour {
     
     [Command]
     public void CMDResetMovement(GameObject gm) {
+        if(gm == null) {
+            return;
+        }
         gm.GetComponent<PlayerResources>().resetMovement(false);
     }
 
     [Command]
     public void CMDIncreaseMovement(GameObject gm, int value) {
+        if(gm == null) {
+            return;
+        }
         gm.GetComponent<PlayerResources>().increaseMovementSpeed(value);
     }
     [Command]
     public void CMDDecreaseMovement(GameObject gm, int value) {
+        if(gm == null) {
+            return;
+        }
         gm.GetComponent<PlayerResources>().reduceMovementSpeed(value);
     }
     [Command]
     public void CMDIncreaseRotation(GameObject gm, float value) {
+        if(gm == null) {
+            return;
+        }
         gm.GetComponent<PlayerResources>().increaseRotationSpeed(value);
     }
     [Command]
     public void CMDDecreaseRotation(GameObject gm, float value) {
+        if(gm == null) {
+            return;
+        }
         gm.GetComponent<PlayerResources>().reduceRotationSpeed(value);
     }
     [Command]
     public void CMDResetDash(GameObject gm) {
+        if(gm == null) {
+            return;
+        }
         gm.GetComponent<PlayerResources>().resetDash();
     }
 
