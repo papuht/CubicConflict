@@ -249,7 +249,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9e3e292a1d628043b97e536c0b6fa5f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  capture: {fileID: 0}
+  captureMid: {fileID: 0}
+  captureTop: {fileID: 0}
+  captureBottom: {fileID: 0}
+  enemyBase: {fileID: 0}
+  captureMidPos: {x: 0, y: 0, z: 0}
+  captureTopPos: {x: 15, y: 22, z: 0}
+  captureBotPos: {x: -15, y: -22, z: 0}
 --- !u!58 &-1678374246924118543
 CircleCollider2D:
   m_ObjectHideFlags: 0

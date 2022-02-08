@@ -15,6 +15,8 @@ public class ConnectionResources : NetworkBehaviour {
 
     protected int playerId;
 
+    
+
     /**
     * Shape prehabs can be dragged here from unity editor
     * WARN! Remmeber to drag new prefabs also to NetworkManager's SpawnableObjects list
@@ -89,6 +91,13 @@ public class ConnectionResources : NetworkBehaviour {
 
     protected bool singleplayer = false;
 
+
+    public bool isSingleplayer() {
+
+        return this.singleplayer;
+    
+    }
+
     public virtual bool isReady() {
         return this.ready;
     }
@@ -135,7 +144,7 @@ public class ConnectionResources : NetworkBehaviour {
             this.initCountdown = true;
             this.countdown = 5;
             this.countdownCheck = Time.time;
-
+            
             Debug.Log(this.aiSpawner);
             this.spawnAI();
         }

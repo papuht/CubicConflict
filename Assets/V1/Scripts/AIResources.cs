@@ -64,4 +64,7 @@ public class AIResources : ConnectionResources {
 
         this.setSpawnShape(this.aiShape);
     }
+
+
+    
 }
