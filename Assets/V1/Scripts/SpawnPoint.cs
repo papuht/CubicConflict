@@ -57,7 +57,7 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
-            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Triangle";
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Triangle";
         }
         else if(Input.GetKeyDown("2")) {
             this.SwapSpawnOnServer("Square");
@@ -65,7 +65,7 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
-            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Square";
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Square";
         }
         else if(Input.GetKeyDown("3")) {
             this.SwapSpawnOnServer("Pentagon");
@@ -73,7 +73,7 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
-            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Pentagon";
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Pentagon";
         }
         else if(Input.GetKeyDown("4")) {
             this.SwapSpawnOnServer("Octagon");
@@ -81,6 +81,8 @@ public class SpawnPoint : NetworkBehaviour {
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
+            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Octagon";
+
         }
 
     }
