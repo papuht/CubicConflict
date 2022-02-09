@@ -6,6 +6,8 @@ public class SelectionMap : MonoBehaviour
 {
     public Dictionary<int, GameObject> selectedUnits = new Dictionary<int, GameObject>();
 
+    public Dictionary<int, List<GameObject>> controlGroups = new Dictionary<int, List<GameObject>>();
+
      void Update() { 
         foreach(KeyValuePair<int, GameObject> entry in this.selectedUnits) {
             if(entry.Value != null) {
@@ -16,6 +18,26 @@ public class SelectionMap : MonoBehaviour
             }
         }
      }
+
+    public void setControlGroup(int groupIndex) {
+        List<GameObject> ctrlGroup = new List<GameObject>();
+        foreach(KeyValuePair<int, GameObject> entry in this.selectedUnits) {
+            ctrlGroup.Add(entry.Value); 
+        }
+        this.controlGroups[groupIndex] = ctrlGroup;
+    }
+
+    public void useControlGroup(int groupIndex) {
+        if(!this.controlGroups.ContainsKey(groupIndex)) {
+            return;
+        }
+
+        this.deselectAll();
+
+        foreach(GameObject gm in this.controlGroups[groupIndex]) {
+            this.selectObject(gm);     
+        }
+    }
     
     public void selectObject(GameObject obj) {
         int id = obj.GetInstanceID();
@@ -37,6 +59,11 @@ public class SelectionMap : MonoBehaviour
 
     public Dictionary<int, GameObject> getSelectedObjects() {
         return this.selectedUnits;
+    }
+
+    public void resetSelectTo(Dictionary<int, GameObject> groupToSelect) {
+        this.deselectAll();
+        this.selectedUnits = groupToSelect;
     }
 
     public void deselectAll() {
