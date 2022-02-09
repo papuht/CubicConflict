@@ -51,7 +51,7 @@ public class SpawnPoint : NetworkBehaviour {
         }
 
         //This is ugly but unity can't fetch the currently pressed keycode for a switch-case :(
-        if(Input.GetKeyDown("1")) { 
+        if(Input.GetKeyDown(KeyCode.A)) { 
             this.SwapSpawnOnServer("Triangle");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
@@ -59,7 +59,7 @@ public class SpawnPoint : NetworkBehaviour {
             );
             GameObject.Find("NextSpawn").GetComponent<Text>().text = "Triangle";
         }
-        else if(Input.GetKeyDown("2")) {
+        else if(Input.GetKeyDown(KeyCode.S)) {
             this.SwapSpawnOnServer("Square");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
@@ -67,7 +67,7 @@ public class SpawnPoint : NetworkBehaviour {
             );
             GameObject.Find("NextSpawn").GetComponent<Text>().text = "Square";
         }
-        else if(Input.GetKeyDown("3")) {
+        else if(Input.GetKeyDown(KeyCode.D)) {
             this.SwapSpawnOnServer("Pentagon");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
@@ -75,7 +75,7 @@ public class SpawnPoint : NetworkBehaviour {
             );
             GameObject.Find("NextSpawn").GetComponent<Text>().text = "Pentagon";
         }
-        else if(Input.GetKeyDown("4")) {
+        else if(Input.GetKeyDown(KeyCode.F)) {
             this.SwapSpawnOnServer("Octagon");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 

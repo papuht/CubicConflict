@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Mirror;
 
 public class PlayerMovement : NetworkBehaviour {
     private SelectionMap map;
+
+    private List<KeyCombination> initedKeys = new List<KeyCombination>();
 
     private float dashTimer;
     private int dashCooldown = 8;
@@ -56,144 +59,162 @@ public class PlayerMovement : NetworkBehaviour {
     void Start() {
         this.map = GetComponent<SelectionMap>(); //Map of selected objects
         this.dashTimer = Time.time;
+        this.initUsableControls();
     }
 
-    
     public override void OnStartClient() {
         this.dashTimer = Time.time;
     }   
 
-    void Update() {
+    public void initUsableControls() {
 
+        //Init simple key-inputs
+        foreach(KeyCode k in (new KeyCode[] {
+            //For optimization sake keep these in the most common usage order
+            KeyCode.Q,
+            KeyCode.W,
+            KeyCode.E,
+            KeyCode.R,
+            KeyCode.Space,
+            KeyCode.Alpha1,
+            KeyCode.Alpha2,
+            KeyCode.Alpha3,
+            KeyCode.Alpha4,
+            KeyCode.Alpha5,
+            KeyCode.T,
+            KeyCode.G,
+            /*
+            TODO: Need to move all controls to new class
+            KeyCode.A,
+            KeyCode.S,
+            KeyCode.D,
+            KeyCode.F,
+            */
+        })) {
+            this.initedKeys.Add(new KeyCombination{
+                key = k,
+                modifier = null,
+            });
+
+            //Also add ctrl modifiers for below keys
+            if(
+                (new KeyCode[] {
+                    KeyCode.Alpha1,
+                    KeyCode.Alpha2,
+                    KeyCode.Alpha3,
+                    KeyCode.Alpha4,
+                    KeyCode.Alpha5,
+                }).Contains(k)
+            ) {
+                this.initedKeys.Add(new KeyCombination{
+                    key = k,
+                    modifier = KeyCode.LeftShift
+                });
+            }
+        }
+    
+    }
+    
+
+    void Update() {
         if(!isLocalPlayer) {
             return;
         }
-
-        //On space send camera to spawn
-        if(Input.GetKeyUp(KeyCode.Space) && !Input.GetKey(KeyCode.LeftShift)) {
-            GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
-        }
-
-        //Dash the selected objects
-        if(Input.GetKeyUp(KeyCode.W)) {
-            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
-                //Make sure GameObject still exists
-                if(entry.Value != null) {
-                    GameObject gm = entry.Value; 
-                    Vector2 mouse = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-                    float distance = gm.GetComponent<PlayerResources>().getMovementSpeed() / 2;
-
-                    //Try to dash
-                    if(gm.GetComponent<PlayerResources>().isDashReady()) {
-                        gm.transform.position = Vector2.MoveTowards( 
-                            gm.transform.position, 
-                            mouse, 
-                            distance
-                        );
-
-                        CMDResetDash(gm);
-
-                        //Change destination a little further than the mouse so that dashing feels more smooth
-                        if(
-                            //dashed
-                            this.movingObjects.ContainsKey(entry.Key) 
-                            && this.movingObjects[entry.Key] != null
-                        ) {
-                            this.movingObjects[entry.Key].destination = new Vector2(mouse.x * 1.2f, mouse.y + 1.2f);
-                        }
-                    }
-
-                }
-            }
-        }
-
-        //Increase rotation decrease movement
-        if(Input.GetKeyUp(KeyCode.Q)) {
-            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
-                //Make sure GameObject still exists
-                if(entry.Value != null) {
-                    GameObject gm = entry.Value; 
-                    if(gm.GetComponent<PlayerResources>().getBaseMovementSpeed() - 5 < (gm.GetComponent<PlayerResources>().getMovementSpeed() - 1)) {
-                        this.CMDDecreaseMovement(gm, 1);
-                    }
-                    this.CMDIncreaseRotation(gm, 20f);
-                    Debug.Log(
-                        "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
-                        + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
-                    );                
-                }
-            }
-        }
-
-        //Increase rotation decrease movement
-        if (Input.GetKeyUp(KeyCode.E)) {
-            foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
-                //Make sure GameObject still exists
-                if(entry.Value != null) {
-                    GameObject gm = entry.Value;
-                    this.CMDIncreaseMovement(gm, 1);
-                    if(gm.GetComponent<PlayerResources>().getBaseRotationSpeed() - 100 < (gm.GetComponent<PlayerResources>().getRotationSpeed() - 20f)) {
-                        this.CMDDecreaseRotation(gm, 20f);
-                    }
-                    Debug.Log(
-                        "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
-                        + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
-                    );
-                }
-            }
-        }
-
-        //On mouse press save point and add all selected shapes into movemet group with said destination
         if(Input.GetMouseButtonUp(1)) {
-            Vector2 click = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
-            
-            foreach(KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+            this.handleMoveToClick();
+        }
+        this.handleKeyInput();
+        this.handleAutoMove();
+    }
 
-                //Make sure GameObject still exists
-                if(entry.Value != null && entry.Value.gameObject != null) {
+    public void handleKeyInput() {
+        //Loop inited keys see if one is pressed
+        foreach(KeyCombination kc in this.initedKeys) {
+            //Check if main key is pressed 
+            if(Input.GetKeyUp(kc.key)) {
 
-                    //Clear forces when adding a new direction
-                    entry.Value.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                    entry.Value.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0f;
-
-                    Debug.Log("New movement registered: " + click);
-                    //If object is already in the movement group, give it a new destination
-                    if(this.movingObjects.ContainsKey(entry.Key) && this.movingObjects[entry.Key] != null) {
-                        //Debug.Log("New destination for: " + entry.Value);
-                        this.movingObjects[entry.Key].destination = click;
-                    }
-                    else { //Add selected object to movement group
-                        //Debug.Log("Adding to Movement group: " + entry.Value);
-
-                        this.movingObjects.Add(
-                            entry.Key, 
-                            new MovingObject(
-                                entry.Value, 
-                                click
-                            )
-                        );
-                        
-                    }
+                //Input handler
+                switch(kc.key) {
+                    case KeyCode.Q:
+                        this.handleDash();
+                        break;
+                    case KeyCode.W:
+                        this.handleDash(); //TODO: Add new abilities
+                        break;
+                    case KeyCode.E:
+                        this.handleDash(); //TODO: Add new abilities
+                        break;
+                    case KeyCode.R:
+                        this.handleDash(); //TODO: Add new abilities
+                        break;  
+                    case KeyCode.Space:
+                        //Space has another function elsewhere with modifier shift
+                        if(!Input.GetKey(KeyCode.LeftShift)) {
+                            this.handleShowSpawner();
+                        }
+                        break;
+                    case KeyCode.Alpha1:
+                        if(kc.modifier == null) {
+                            this.handleControlGroupSelect(1);
+                        }
+                        else if(Input.GetKey((KeyCode) kc.modifier)) {
+                            this.handleControlGroupUpdate(1);
+                        }
+                        break;
+                    case KeyCode.Alpha2:
+                        if(kc.modifier == null) {
+                            this.handleControlGroupSelect(2);
+                        }
+                        else if(Input.GetKey((KeyCode) kc.modifier)) {
+                            this.handleControlGroupUpdate(2);
+                        }
+                        break;
+                    case KeyCode.Alpha3:
+                        if(kc.modifier == null) {
+                            this.handleControlGroupSelect(3);
+                        }
+                        else if(Input.GetKey((KeyCode) kc.modifier)) {
+                            this.handleControlGroupUpdate(3);
+                        }
+                        break;
+                    case KeyCode.Alpha4:
+                        if(kc.modifier == null) {
+                            this.handleControlGroupSelect(4);
+                        }
+                        else if(Input.GetKey((KeyCode) kc.modifier)) {
+                            this.handleControlGroupUpdate(4);
+                        }
+                        break;
+                    case KeyCode.Alpha5:
+                        if(kc.modifier == null) {
+                            this.handleControlGroupSelect(5);
+                        }
+                        else if(Input.GetKey((KeyCode) kc.modifier)) {
+                            this.handleControlGroupUpdate(5);
+                        }
+                        break;
+                    case KeyCode.T:
+                        handleIncreaseRotation();
+                        break;
+                    case KeyCode.G:
+                        handleDecreaseRotation();
+                        break;
                 }
             }
         }
+    }
 
-        //Stop movement of objects if 'S' is pressed
-        if(Input.GetKeyUp(KeyCode.S)) {
+    public void handleControlGroupUpdate(int groupIndex) {
+        Debug.Log("SET CONTROL GROUP " + groupIndex);
+        this.map.setControlGroup(groupIndex);
+    }
 
-            //On shift + s stop all movement
-            if (Input.GetKeyDown(KeyCode.LeftShift)) {
-                this.movingObjects.Clear();
-            }
-            else {//Stop movement of selected objects
-                foreach(KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
-                    if(this.movingObjects.ContainsKey(entry.Key) && this.movingObjects[entry.Key] != null) {
-                        this.movingObjects.Clear();
-                    }
-                }
-            }
-        }
+    public void handleControlGroupSelect(int groupIndex) {
+        Debug.Log("USE CONTROL GROUP " + groupIndex);
+        this.map.useControlGroup(groupIndex);
+    }
 
+    public void handleAutoMove() {
         //Go through moving objects and move them towards the destination
         //If movemenet returns false ie. gameobject is destroyed add it to be removed
         List<int> remove = new List<int>();
@@ -219,7 +240,124 @@ public class PlayerMovement : NetworkBehaviour {
         foreach(int id in remove) { 
             this.movingObjects.Remove(id);
         }
-        
+    }
+
+    public void handleMoveToClick() {
+        Vector2 click = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+            
+        foreach(KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+
+            //Make sure GameObject still exists
+            if(entry.Value != null && entry.Value.gameObject != null) {
+
+                //Clear forces when adding a new direction
+                entry.Value.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                entry.Value.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0f;
+
+                Debug.Log("New movement registered: " + click);
+                //If object is already in the movement group, give it a new destination
+                if(this.movingObjects.ContainsKey(entry.Key) && this.movingObjects[entry.Key] != null) {
+                    //Debug.Log("New destination for: " + entry.Value);
+                    this.movingObjects[entry.Key].destination = click;
+                }
+                else { //Add selected object to movement group
+                    //Debug.Log("Adding to Movement group: " + entry.Value);
+
+                    this.movingObjects.Add(
+                        entry.Key, 
+                        new MovingObject(
+                            entry.Value, 
+                            click
+                        )
+                    );
+                    
+                }
+            }
+        }
+    }
+
+    public void handleStopMovement() {
+        //On shift + s stop all movement
+        if (Input.GetKeyDown(KeyCode.LeftShift)) {
+            this.movingObjects.Clear();
+        }
+        else {//Stop movement of selected objects
+            foreach(KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+                if(this.movingObjects.ContainsKey(entry.Key) && this.movingObjects[entry.Key] != null) {
+                    this.movingObjects.Clear();
+                }
+            }
+        }
+    }
+
+
+    public void handleDash() {
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+            //Make sure GameObject still exists
+            if(entry.Value != null) {
+                GameObject gm = entry.Value; 
+                Vector2 mouse = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+                float distance = gm.GetComponent<PlayerResources>().getMovementSpeed() / 2;
+
+                //Try to dash
+                if(gm.GetComponent<PlayerResources>().isDashReady()) {
+                    gm.transform.position = Vector2.MoveTowards( 
+                        gm.transform.position, 
+                        mouse, 
+                        distance
+                    );
+
+                    CMDResetDash(gm);
+
+                    //Change destination a little further than the mouse so that dashing feels more smooth
+                    if(
+                        //dashed
+                        this.movingObjects.ContainsKey(entry.Key) 
+                        && this.movingObjects[entry.Key] != null
+                    ) {
+                        this.movingObjects[entry.Key].destination = new Vector2(mouse.x * 1.2f, mouse.y + 1.2f);
+                    }
+                }
+            }
+        }
+    }
+
+    public void handleIncreaseRotation() {
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+            //Make sure GameObject still exists
+            if(entry.Value != null) {
+                GameObject gm = entry.Value; 
+                if(gm.GetComponent<PlayerResources>().getBaseMovementSpeed() - 5 < (gm.GetComponent<PlayerResources>().getMovementSpeed() - 1)) {
+                    this.CMDDecreaseMovement(gm, 1);
+                }
+                this.CMDIncreaseRotation(gm, 20f);
+                Debug.Log(
+                    "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
+                    + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
+                );                
+            }
+        }
+    }
+
+    public void handleDecreaseRotation() {
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+            //Make sure GameObject still exists
+            if(entry.Value != null) {
+                GameObject gm = entry.Value;
+                this.CMDIncreaseMovement(gm, 1);
+                if(gm.GetComponent<PlayerResources>().getBaseRotationSpeed() - 100 < (gm.GetComponent<PlayerResources>().getRotationSpeed() - 20f)) {
+                    this.CMDDecreaseRotation(gm, 20f);
+                }
+                Debug.Log(
+                    "Updated movement - rs: " + gm.GetComponent<PlayerResources>().getRotationSpeed() 
+                    + " | ms: " + gm.GetComponent<PlayerResources>().getMovementSpeed()
+                );
+            }
+        }
+    }
+
+    public void handleShowSpawner() {
+        GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
     }
 
     //A sub-class to store the info of moving objects, much easier to handle than a double dictionary
@@ -282,4 +420,12 @@ public class PlayerMovement : NetworkBehaviour {
         }
 
     }
+
+    //Quick structure for storing a key + modifier combo
+    //Eg. Shift + E
+    public struct KeyCombination {
+        public KeyCode key;
+        public KeyCode? modifier; //Null if not used
+    }
+
 }
