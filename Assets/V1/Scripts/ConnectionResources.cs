@@ -136,11 +136,11 @@ public class ConnectionResources : NetworkBehaviour {
     protected virtual void Start() {
         //Handle local singleplayer
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
+
         if(this.singleplayer) {
             this.initCountdown = true;
             this.countdown = 5;
             this.countdownCheck = Time.time;
-          
             this.spawnAI();
         }
     }
@@ -228,7 +228,7 @@ public class ConnectionResources : NetworkBehaviour {
         }
 
         if(GameObject.Find("ClientStatusText") != null) {
-            Text clientStatus = GameObject.Find("ClientStatusText").GetComponent<Text>();
+            Text clientStatus = GameObject.Find("ClientStatusHeader").GetComponent<Text>();
             clientStatus.text = clientStatus.text.Replace("Connecting to", "Connected to");
         }
         
@@ -286,7 +286,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Square":
                     shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 30,
+                        hitpoints = 20,
                         movementspeed = 11,
                         maxMovementspeed = 16,
                         rotationspeed = 200f,
@@ -299,7 +299,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Pentagon":
                     shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 40,
+                        hitpoints = 30,
                         movementspeed = 7,
                         maxMovementspeed = 12,
                         rotationspeed = 150f,
@@ -312,7 +312,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Octagon":
                     shape = new SpawnableShape{
                         prefab = prefab,
-                        hitpoints = 50, 
+                        hitpoints = 40, 
                         movementspeed = 3, 
                         maxMovementspeed = 8, 
                         rotationspeed = 100f, 

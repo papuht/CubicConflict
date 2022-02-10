@@ -32,6 +32,7 @@ public class ConnectionHandler : MonoBehaviour {
     public Button clientBackBtn;
     public Text errorText;
     public Text clientStatusText;
+     public Text clientStatusHeader;
 
     //Connection container
     public GameObject connectionContainer;
@@ -52,6 +53,7 @@ public class ConnectionHandler : MonoBehaviour {
             () => { 
                 this.setConnectionError("");
                 this.clientStatusText.text = "";
+                this.clientStatusHeader.text = "";
                 this.showClientContainer(true);
                 this.showClientPreConnectContainer(true);
                 this.showStartContainer(false);
@@ -77,7 +79,7 @@ public class ConnectionHandler : MonoBehaviour {
     public void startSinglePlayer() {
         this.StartHost();
 
-        this.connectToCode = "-";
+        this.connectToCode =  "-";
 
         this.player1ConnectionText.color = Color.green;
         this.player1ConnectionText.text = "Player 1: Ready (Host)";
@@ -104,27 +106,25 @@ public class ConnectionHandler : MonoBehaviour {
                 return;
             }
 
+
             try {
-                this.connectWithIP = this.decodeIP(rawInput);
-                if(rawInput == null || rawInput == "") {
-                    setConnectionError("Invalid code given");
-                    return;
-                }   
+                this.connectWithIP = rawInput;
+                NetworkManager.singleton.networkAddress = this.connectWithIP;
+                NetworkManager.singleton.StartClient();
+
+                this.showClientPreConnectContainer(false);
+                this.clientStatusText.text = "" + this.connectWithCode;
+                this.clientStatusHeader.text = "Connecting to:";
+                this.showConnectionContainer(true);
+                this.player2ConnectionText.color = Color.green;
+                this.player2ConnectionText.text = "Player 2: Ready (Client)";
             }
             catch {
                 setConnectionError("Invalid code given");
                 return;
             }
         }
-
-        this.showClientPreConnectContainer(false);
-        this.clientStatusText.text = "Connecting to: " + this.connectWithCode;
-        this.showConnectionContainer(true);
-        this.player2ConnectionText.color = Color.green;
-        this.player2ConnectionText.text = "Player 2: Ready (Client)";
-
-        NetworkManager.singleton.networkAddress = this.connectWithIP;
-        NetworkManager.singleton.StartClient();
+        
     }
 
     public void StopClient() {
@@ -141,8 +141,10 @@ public class ConnectionHandler : MonoBehaviour {
         //Thread this action since it takes a bit to ping the website
         (new Thread(() => {
             if(!this.singleplayer) {
-                string ip = this.getIP();
-                this.connectToCode = this.encodeIP(ip);
+                //string ip = this.getIP();
+                //this.connectToCode = this.encodeIP(ip);
+                this.connectToCode = Steamworks.SteamClient.SteamId.ToString();
+               
             }
         })).Start();
 
@@ -188,6 +190,16 @@ public class ConnectionHandler : MonoBehaviour {
         mainContainer.gameObject.SetActive(show);
     }
 
+    public string encodeSteamID(string id) {
+        var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(id);
+        return System.Convert.ToBase64String(plainTextBytes);
+    }
+
+    public string decodeSteamID(string encodedId) {
+        var base64EncodedBytes = System.Convert.FromBase64String(encodedId);
+        return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
+    }
+
     public string getIP() {
         string htmlResponse = new WebClient().DownloadString("http://checkip.dyndns.org");
         if(htmlResponse == null) {
@@ -226,6 +238,6 @@ public class ConnectionHandler : MonoBehaviour {
     }
 
     void Update() {
-        this.codeText.text = "Game code: " + this.connectToCode;
+        this.codeText.text = this.connectToCode;
     }
 }
