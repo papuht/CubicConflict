@@ -6,6 +6,10 @@ public class AISpawnScript : NetworkBehaviour
 {
     private double lastCheck;
 
+    
+
+
+
     public void resetTimer() {
         this.lastCheck = Time.time;
     }
@@ -30,11 +34,57 @@ public class AISpawnScript : NetworkBehaviour
         }
     }
 
+
+    public void AssignGroup(GameObject ai)
+    {
+
+        if (GetComponent<AIResources>().bottomdefense.Count <= 5)
+        {
+
+
+            GetComponent<AIResources>().bottomdefense.Add(ai);
+            Debug.Log("BottomDefense:" + GetComponent<AIResources>().bottomdefense.Count);
+
+        }
+
+        else if (GetComponent<AIResources>().bottomdefense.Count >= 5 && GetComponent<AIResources>().middefense.Count <= 5)
+        {
+
+            GetComponent<AIResources>().middefense.Add(ai);
+            Debug.Log("Middefense:" + GetComponent<AIResources>().middefense.Count);
+
+        }
+
+
+        else if (GetComponent<AIResources>().middefense.Count >= 5 && GetComponent<AIResources>().bottomdefense.Count >= 5 && GetComponent<AIResources>().topdefense.Count <= 5)
+        {
+
+
+
+            GetComponent<AIResources>().topdefense.Add(ai);
+            Debug.Log("Topdefense:" + GetComponent<AIResources>().topdefense.Count);
+
+
+        }
+        else
+        {
+
+            GetComponent<AIResources>().attackGroup.Add(ai);
+            Debug.Log("Attackgroup:" + GetComponent<AIResources>().attackGroup.Count);
+
+        }
+
+
+    }
+
+
+
     [Command]
     public void Spawn() {
 
         //Note reference to AIResources
         ConnectionResources cr = GetComponent<AIResources>();
+        
 
         GameObject spawnablePlayer = Instantiate(
             cr.getSpawnShape().prefab,
@@ -59,6 +109,12 @@ public class AISpawnScript : NetworkBehaviour
         pr.setConnectionResources(cr);
         cr.addToPlayerObjects(spawnablePlayer);
 
-        NetworkServer.Spawn(spawnablePlayer, connectionToClient); 
+        
+
+        NetworkServer.Spawn(spawnablePlayer, connectionToClient);
+        AssignGroup(spawnablePlayer);
     }
+
+
+    
 }

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class Capture : NetworkBehaviour {
 
     public GameObject stateHandler;
+    public GameObject capturePoint;
 
     [SyncVar]
     private int player1 = 0;
@@ -17,6 +18,8 @@ public class Capture : NetworkBehaviour {
     private bool player1Control = false;
     [SyncVar]
     private bool player2Control = false;
+
+    
 
 
     private int player1ID = 0; //Host is always 0
@@ -29,9 +32,16 @@ public class Capture : NetworkBehaviour {
         Debug.Log("CapturePoint INIT");
     }
 
+    void Start()
+    {
+        this.capturePoint = this.gameObject;
+    }
+
     void Update() {
         Control();
     }
+
+    
 
 
     /*Called when block enters the capture point*/
@@ -146,6 +156,21 @@ public class Capture : NetworkBehaviour {
 
     public void referenceGameStateHandler(GameObject reference) {
         this.stateHandler = reference;
+    }
+
+
+    public bool getPlayer2Control() {
+        return this.player2Control;    
+    }
+
+    public bool getPlayer1Control() {
+
+        return this.player1Control;
+    }
+
+    public GameObject getCapturePoint() {
+
+        return this.capturePoint;
     }
 
 }
