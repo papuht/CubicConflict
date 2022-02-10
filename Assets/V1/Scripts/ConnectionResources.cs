@@ -140,8 +140,7 @@ public class ConnectionResources : NetworkBehaviour {
             this.initCountdown = true;
             this.countdown = 5;
             this.countdownCheck = Time.time;
-            
-            Debug.Log(this.aiSpawner);
+          
             this.spawnAI();
         }
     }
