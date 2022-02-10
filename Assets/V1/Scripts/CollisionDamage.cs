@@ -7,6 +7,19 @@ public class CollisionDamage : NetworkBehaviour {
 
     public Collider2D hitCollider;
 
+    void Update() {
+         if(!this.isClient || !this.hasAuthority) {
+            return;
+        }
+
+        if( //Make sure dead shapes stay dead
+            this.gameObject != null 
+            && this.gameObject.GetComponent<PlayerResources>().isDead()
+        ) {
+            CMDDestroy(this.gameObject);
+        }
+    }
+
     private void OnCollisionEnter2D(Collision2D collision) { 
         Collider2D collider1 = collision.collider;
         Collider2D collider2 = collision.otherCollider;
