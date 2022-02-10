@@ -92,11 +92,7 @@ public class ConnectionResources : NetworkBehaviour {
     protected bool singleplayer = false;
 
 
-    public bool isSingleplayer() {
-
-        return this.singleplayer;
     
-    }
 
     public virtual bool isReady() {
         return this.ready;
