@@ -21,6 +21,13 @@ public class AIResources : ConnectionResources {
 
     private SpawnableShape aiShape;
 
+    public ArrayList bottomdefense = new ArrayList();
+    public ArrayList topdefense = new ArrayList();
+    public ArrayList middefense = new ArrayList();
+    public ArrayList attackGroup = new ArrayList();
+
+
+
     //Reference for the player ConnectionResources
     private ConnectionResources syncResources;
 
@@ -66,5 +73,7 @@ public class AIResources : ConnectionResources {
     }
 
 
-    
+   
+
+
 }

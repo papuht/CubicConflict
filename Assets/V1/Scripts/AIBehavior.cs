@@ -9,48 +9,49 @@ public class AIBehavior : MonoBehaviour
     private GameObject ai;
 
 
-    GameObject captureMid; 
-    GameObject captureBot; 
+    GameObject captureMid;
+    GameObject captureBot;
     GameObject captureTop;
 
-    public ArrayList bottomdefense = new ArrayList();
-    public ArrayList topdefense = new ArrayList();
-    public ArrayList middefense = new ArrayList();
+   
 
-    private bool onTheTarget = false;
 
     // Start is called before the first frame update
-    void Start() {
+    void Start()
+    {
         //This is probaply the wanted outcome
         this.ai = this.gameObject;
         this.captureTop = GameObject.Find("CaptureTop");
         this.captureMid = GameObject.Find("CaptureMid");
         this.captureBot = GameObject.Find("CaptureBot");
-        
+
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         ControlCheck();
-        Debug.Log("Player 2 control value bottom:" + captureBot.GetComponent<Capture>().getPlayer2Control());
-         
+        
+
     }
 
     /*
      Checks if the AI -controlled pawn is idle. If idle, gives orders.  
      */
-    
+
 
     /* change idle status to the parameter given*/
-    private void toggleIdleStatus(bool isIdle) { 
+    private void toggleIdleStatus(bool isIdle)
+    {
         this.isIdle = isIdle;
     }
 
-    private bool getIdleStatus() {
+    private bool getIdleStatus()
+    {
         return this.isIdle;
     }
 
-    
+
     /* if enemy pawn enters the circular collider trigger, AI attacks*//*
     private void OnTriggerEnter2D(Collider2D collider) {
 
@@ -104,104 +105,99 @@ public class AIBehavior : MonoBehaviour
     */
 
     /* method for moving AI pawns*/
-    private void Movement(Vector2 destination) {
+    private void Movement(Vector2 destination, GameObject ai)
+    {
         PlayerMovement.MovingObject move = new PlayerMovement.MovingObject(ai, destination);
-        if(!move.move()) {
+        if (!move.move())
+        {
             //Clear force from a collision (or if the shape happens to be stuck)
             this.ai.GetComponent<PlayerResources>().resetMovement(false);
         }
     }
 
-    private void ControlCheck() {
-
-        if (this.ai.transform.position == captureBot.transform.position)
-        {
-            bottomdefense.Add(this.ai);
-        }
-
-        if (this.ai.transform.position == captureMid.transform.position) { 
+    private void ControlCheck()
+    {
         
-            middefense.Add(this.ai);
-        }
-
-        if (this.ai.transform.position == captureTop.transform.position)
+        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).bottomdefense.Contains(this.ai))
         {
-
-            topdefense.Add(this.ai);
-        }
-
-        /*
-
-        if (this.ai.transform.position != captureTop.transform.position)
-        { 
-            topdefense.Remove(this.ai);
-        }
-
-        if (this.ai.transform.position != captureMid.transform.position)
-        {
-            middefense.Remove(this.ai);
-        }
-
-        if (this.ai.transform.position != captureBot.transform.position)
-        {
-            bottomdefense.Remove(this.ai);
-        }
-
-        */
-
-
-        if (bottomdefense.Count < 5 || captureBot.GetComponent<Capture>().getPlayer1Control() == true)
-        {
-            
-
-
+            if (captureBot.GetComponent<Capture>().getPlayer1Control())
+            {
                 Vector3 destination = captureBot.transform.position;
-                Movement(destination);
+                Movement(destination, this.ai);
+            }
+            else if (!captureBot.GetComponent<Capture>().getPlayer2Control())
+            {
+                Vector3 destination = captureBot.transform.position;
+                Movement(destination, this.ai);
+            }
+            else if (captureBot.GetComponent<Capture>().getPlayer2Control())
+            {
+                Vector3 destination = captureBot.transform.position;
+                Movement(destination, this.ai);
+            }
 
-
-
-            
         }
 
-                else if (middefense.Count <= 5  || captureMid.GetComponent<Capture>().getPlayer1Control() == true) {
-            
+        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).middefense.Contains(this.ai))
+        {
+            if (captureMid.GetComponent<Capture>().getPlayer1Control())
+            {
+                Vector3 destination = captureMid.transform.position;
+                Movement(destination, this.ai);
+            }
+            else if (!captureMid.GetComponent<Capture>().getPlayer2Control())
+            {
+                Vector3 destination = captureMid.transform.position;
+                Movement(destination, this.ai);
+            }
+            else if (captureMid.GetComponent<Capture>().getPlayer2Control())
+            {
+                Vector3 destination = captureMid.transform.position;
+                Movement(destination, this.ai);
+            }
 
+        }
+
+        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).topdefense.Contains(this.ai))
+        {
+            if (captureTop.GetComponent<Capture>().getPlayer1Control())
+            {
+                Vector3 destination = captureTop.transform.position;
+                Movement(destination, this.ai);
+            }
+            else if (!captureTop.GetComponent<Capture>().getPlayer2Control())
+            {
+                Vector3 destination = captureTop.transform.position;
+                Movement(destination, this.ai);
+            }
+            else if (captureTop.GetComponent<Capture>().getPlayer2Control())
+            {
+                Vector3 destination = captureTop.transform.position;
+                Movement(destination, this.ai);
+            }
+
+        }
+
+        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).attackGroup.Contains(this.ai))
+        {
+           if (captureMid.GetComponent<Capture>().getPlayer1Control())
+                {
                     Vector3 destination = captureMid.transform.position;
-                    Movement(destination);
-            
+                    Movement(destination, this.ai);
                 }
-
-
-                        else if (topdefense.Count < 5 || captureTop.GetComponent<Capture>().getPlayer1Control() == true)
-                        {
-            
-
-
-
-                            Vector3 destination = captureTop.transform.position;
-                             Movement(destination);
-
-            
-
-
-                         }
-
+           else if (captureMid.GetComponent<Capture>().getPlayer1Control())
+            {
+                Vector3 destination = captureMid.transform.position;
+                Movement(destination, this.ai);
+            }
+           else if(captureBot.GetComponent<Capture>().getPlayer1Control())
+                {
+                Vector3 destination = captureBot.transform.position;
+                Movement(destination, this.ai);
+            }
+        }
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
     }
-
 }
