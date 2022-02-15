@@ -17,7 +17,6 @@ GameObject:
   - component: {fileID: 3165117590727923680}
   - component: {fileID: 3176005668961361031}
   - component: {fileID: -2608705707708055624}
-  - component: {fileID: 2685961279020068741}
   - component: {fileID: 1926922828378570524}
   m_Layer: 0
   m_Name: Spawner
@@ -170,6 +169,7 @@ MonoBehaviour:
   p2TeamColors:
   - {r: 1, g: 0, b: 0, a: 1}
   aiSpawner: {fileID: 5817675306638449302, guid: d8120ac6f6f85934caea8d5bf81cdf10, type: 3}
+  gm: {fileID: 4055988211916035381, guid: 70cb65fb4bb284d48a944f2addccc529, type: 3}
   spawnablePrefabs:
   - {fileID: 831503909029019738, guid: ff608343fbcd0e641af53396609b259b, type: 3}
   - {fileID: 831503909029019738, guid: 2c602adbf4b0a2048a519676817478cf, type: 3}
@@ -201,6 +201,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 99ca1a13125e29449a41d0a8a80a38ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lastFrame: []
+  parentContainer: {fileID: 0}
+  UITriangle: {fileID: 4055988211916035381, guid: 70cb65fb4bb284d48a944f2addccc529, type: 3}
+  UISquare: {fileID: 730305919137455176, guid: bbec459d775288a4aab914f66e346aad, type: 3}
+  UIPentagon: {fileID: 3594144965904090976, guid: cdc2d33c44545fe42b36d753d1598d71, type: 3}
+  UIOctagon: {fileID: 0}
 --- !u!114 &-2608705707708055624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,25 +221,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
---- !u!114 &2685961279020068741
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3381073493851452118}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9b6e0ef9060bcb4ab95e11a863eb865, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  hpText: {fileID: 0}
-  dashCooldown: {fileID: 0}
-  spawn: {fileID: 0}
-  spawnNext: {fileID: 0}
-  lastCheck: 0
 --- !u!82 &1926922828378570524
 AudioSource:
   m_ObjectHideFlags: 0

@@ -12,10 +12,7 @@ GameObject:
   - component: {fileID: 5817675306638449300}
   - component: {fileID: 6458058802285512731}
   - component: {fileID: 4230864431776812610}
-  - component: {fileID: 6177730454415982496}
-  - component: {fileID: 5927868402951500999}
   - component: {fileID: 2709890756725233656}
-  - component: {fileID: 6562034097245374405}
   - component: {fileID: 7271829785522100060}
   - component: {fileID: 4856996553048872185}
   - component: {fileID: 8199402834601509803}
@@ -137,32 +134,6 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
---- !u!114 &6177730454415982496
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5817675306638449302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3074a485b189ce9489d6edba146d228d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
---- !u!114 &5927868402951500999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5817675306638449302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99ca1a13125e29449a41d0a8a80a38ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2709890756725233656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,25 +148,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
---- !u!114 &6562034097245374405
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5817675306638449302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9b6e0ef9060bcb4ab95e11a863eb865, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  hpText: {fileID: 0}
-  dashCooldown: {fileID: 0}
-  spawn: {fileID: 0}
-  spawnNext: {fileID: 0}
-  lastCheck: 0
 --- !u!82 &7271829785522100060
 AudioSource:
   m_ObjectHideFlags: 0
@@ -325,5 +277,6 @@ MonoBehaviour:
   p2TeamColors:
   - {r: 1, g: 0, b: 0, a: 1}
   aiSpawner: {fileID: 0}
+  gm: {fileID: 0}
   spawnablePrefabs:
   - {fileID: 1109357926822270125, guid: 7942ba1f8bd1c4443987b5b1b6135cc5, type: 3}

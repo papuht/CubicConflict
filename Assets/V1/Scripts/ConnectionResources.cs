@@ -13,6 +13,8 @@ public class ConnectionResources : NetworkBehaviour {
 
     public GameObject aiSpawner;
 
+    public GameObject gm;
+
     protected int playerId;
 
     
@@ -134,6 +136,7 @@ public class ConnectionResources : NetworkBehaviour {
     }
 
     protected virtual void Start() {
+        Debug.Log(this.gm);
         //Handle local singleplayer
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
 
@@ -318,7 +321,7 @@ public class ConnectionResources : NetworkBehaviour {
                         rotationspeed = 100f, 
                         maxRotationspeed = 200f, 
                         cooldown = 14,
-                        name = "Hexagon"
+                        name = "Octagon"
                     };
                 break;
 
