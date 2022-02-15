@@ -49,6 +49,9 @@ public class PlayerResources : NetworkBehaviour {
     public bool clearMovement;
 
     [SyncVar]
+    public string type;
+
+    [SyncVar]
     public bool isAI = false;
 
     /**
@@ -133,6 +136,16 @@ public class PlayerResources : NetworkBehaviour {
 
     public Color getColor() {
         return this.color;
+    }
+
+
+    [Server]
+    public void setType(string type) {
+        this.type = type;
+    }
+
+    public string getType() {
+        return this.type;
     }
 
     public void setSpriteColor(Color c) {
@@ -303,6 +316,11 @@ public class PlayerResources : NetworkBehaviour {
     [Server]
     public void resetDash() {
         this.dashTimer = Time.time;
+    }
+
+    public float getAbilityCooldown() {
+        int cd = (int) (8 - (Time.time - this.dashTimer));
+        return (cd < 0 ? 0 : cd);
     }
 
     public bool isDashReady() {
