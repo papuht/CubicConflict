@@ -25,6 +25,10 @@ public class GameStateHandler : NetworkBehaviour {
 
     public GameObject capture;
 
+    public GameObject p1EndUIContainer; //Set in editor
+
+    public GameObject p2EndUIContainer; //Set in editor
+
     void Update() {
 
         if(!this.isServer) {
@@ -41,11 +45,11 @@ public class GameStateHandler : NetworkBehaviour {
             }
 
             if(this.player1Score >= 100) {
-                this.handleGameEnd("Player 1");
+                this.handleGameEnd("p1");
                 this.gg = true;
             }
             else if(this.player2Score >= 100) {
-                this.handleGameEnd("Player 2");
+                this.handleGameEnd("p2");
                 this.gg = true;
             }
         }
@@ -67,7 +71,12 @@ public class GameStateHandler : NetworkBehaviour {
         this.scoreText.enabled = false;
         this.player1Text.enabled = false;
         this.player2Text.enabled = false;
-        this.gameoverText.text = " GG & WP " + winner + " wins!";
+        if(winner == "p1") {
+            this.p1EndUIContainer.SetActive(true);
+        }
+        else {
+            this.p2EndUIContainer.SetActive(true);
+        }
     }
 
     override public void OnStartClient() {
