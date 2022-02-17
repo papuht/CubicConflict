@@ -44,11 +44,21 @@ public class ConnectionHandler : MonoBehaviour {
 
     private bool singleplayer;
 
+
+    //End game screens
+    public GameObject endGameBlueContainer;
+    public Button endGameReturnBlue;
+    public GameObject endGameRedContainer;
+    public Button endGameReturnRed;
+
     void Start() {
         this.hostBtn.onClick.AddListener(StartHost);
         this.hostBackBtn.onClick.AddListener(stopHost);
         this.clientBackBtn.onClick.AddListener(StopClient);
         this.connectBtn.onClick.AddListener(StartClient);
+        this.endGameReturnRed.onClick.AddListener(killBothConnections);
+        this.endGameReturnBlue.onClick.AddListener(killBothConnections);
+
         this.joinBtn.onClick.AddListener(
             () => { 
                 this.setConnectionError("");
@@ -69,11 +79,18 @@ public class ConnectionHandler : MonoBehaviour {
         this.showClientContainer(false);
         this.showHostContainer(false);
         this.showConnectionContainer(false);
+        this.shoeEndGameBlueContainer(false);
+        this.shoeEndGameRedContainer(false);
 
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
         if(singleplayer) {
             startSinglePlayer();
         }
+    }
+
+    public void killBothConnections() {
+        this.stopHost();
+        this.StopClient();
     }
 
     public void startSinglePlayer() {
@@ -180,6 +197,14 @@ public class ConnectionHandler : MonoBehaviour {
 
     public void showClientPreConnectContainer(bool show) {
         clientPreConnectContainer.SetActive(show);
+    }
+
+    public void shoeEndGameBlueContainer(bool show) {
+        this.endGameBlueContainer.SetActive(show);
+    }
+
+    public void shoeEndGameRedContainer(bool show) {
+        this.endGameRedContainer.SetActive(show);
     }
 
     public void showConnectionContainer(bool show) {
