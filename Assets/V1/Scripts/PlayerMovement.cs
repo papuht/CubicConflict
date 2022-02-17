@@ -56,6 +56,26 @@ public class PlayerMovement : NetworkBehaviour {
         gm.GetComponent<PlayerResources>().resetDash();
     }
 
+    [Command]
+    public void CMDResetChange(GameObject gm)
+    {
+        if (gm == null)
+        {
+            return;
+        }
+        gm.GetComponent<PlayerResources>().resetChange();
+    }
+
+    [Command]
+    public void CMDResetExpire(GameObject gm)
+    {
+        if (gm == null)
+        {
+            return;
+        }
+        gm.GetComponent<PlayerResources>().resetExpire();
+    }
+
     void Start() {
         this.map = GetComponent<SelectionMap>(); //Map of selected objects
         this.dashTimer = Time.time;
@@ -139,7 +159,7 @@ public class PlayerMovement : NetworkBehaviour {
                         this.handleDash();
                         break;
                     case KeyCode.W:
-                        this.handleDash(); //TODO: Add new abilities
+                        this.handleSizeChange(); //TODO: Add new abilities
                         break;
                     case KeyCode.E:
                         this.handleDash(); //TODO: Add new abilities
@@ -359,6 +379,50 @@ public class PlayerMovement : NetworkBehaviour {
     public void handleShowSpawner() {
         GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
     }
+
+
+    public void handleSizeChange() {
+
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
+        {
+           
+
+            //Make sure GameObject still exists
+            if (entry.Value != null)
+            {
+                GameObject gm = entry.Value;
+
+                //Only works for pentagon shape and only if it's not already changed
+                if(gm.GetComponent<PlayerResources>().getType() == "Pentagon" && (gm.GetComponent<PlayerResources>().getIsSizeChanged() == false))
+
+                {
+                    
+                    Vector2 temp;
+                                    
+                    temp = gm.transform.localScale;
+                    gm.GetComponent<PlayerResources>().setOriginalSize(temp);
+                    temp.x += 3.0f;
+                    temp.y += 3.0f;
+
+
+
+
+                    if (gm.GetComponent<PlayerResources>().isChangeReady())
+                    {
+                        gm.transform.localScale = temp;
+                        gm.GetComponent<PlayerResources>().setIsSizeChanged(true);
+                        CMDResetChange(gm);
+                        CMDResetExpire(gm);
+                    }
+
+                }
+            }
+        }
+
+    }
+
+   
+
 
     //A sub-class to store the info of moving objects, much easier to handle than a double dictionary
     public class MovingObject {
