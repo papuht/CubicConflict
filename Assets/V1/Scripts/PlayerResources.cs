@@ -1,10 +1,19 @@
 using UnityEngine;
 using Mirror;
 
-public class PlayerResources : NetworkBehaviour { 
+public class PlayerResources : NetworkBehaviour {
+
+    [SyncVar]
+    public GameObject gm;
 
     void Start() {
         this.setSpriteColor(this.color);
+    }
+
+    private void Update()
+    {
+        this.gm = this.gameObject;
+        handleSizeReversion();
     }
 
     private SyncDictionary<string, string> storage = new SyncDictionary<string, string>();
@@ -44,6 +53,12 @@ public class PlayerResources : NetworkBehaviour {
 
     [SyncVar]
     public float dashTimer = 0f;
+
+    [SyncVar]
+    public float changeTimer = 0f;
+
+    [SyncVar]
+    public float expireTimer = 0f;
     
     [SyncVar]
     public bool clearMovement;
@@ -53,6 +68,15 @@ public class PlayerResources : NetworkBehaviour {
 
     [SyncVar]
     public bool isAI = false;
+
+    [SyncVar]
+    public bool isSizeChanged = false;
+
+    [SyncVar]
+    public Vector2 originalSize;
+
+    
+
 
     /**
     * All SyncVar settings have to happen on the server
@@ -317,6 +341,19 @@ public class PlayerResources : NetworkBehaviour {
     public void resetDash() {
         this.dashTimer = Time.time;
     }
+    //methods similar to resetDash to track reset timers
+    [Server]
+    public void resetChange() { 
+        this.changeTimer = Time.time;
+
+    }
+
+    [Server]
+    public void resetExpire()
+    {
+        this.expireTimer = Time.time;
+
+    }
 
     public float getAbilityCooldown() {
         int cd = (int) (8 - (Time.time - this.dashTimer));
@@ -329,5 +366,69 @@ public class PlayerResources : NetworkBehaviour {
         }
         return false;
     }
+
+
+   //method to track time for the reloading of change
+    public bool isChangeReady() {
+        if ((Time.time - this.changeTimer) > 25)
+        {
+            return true;
+        }
+        return false;
+
+    }
+
+    //Method to track time for the duration of the change
+    public bool isChangeExpired() {
+
+        if ((Time.time - this.expireTimer) > 30)
+        {
+            return true;
+        }
+        return false;
+
+
+    }
+
+
+    //methods to set and get the boolean that is used in checking for the change to be in effect
+    [Server]
+    public void setIsSizeChanged(bool value) {
+        this.isSizeChanged = value;
+    
+    }
+
+    public bool getIsSizeChanged() {
+        return this.isSizeChanged;
+    }
+
+    //Methods used to store the original size of the object and revert back to it when change is over. 
+    public void setOriginalSize(Vector2 x) { this.originalSize = x; }
+
+    public Vector2 getOriginalSize() { return this.originalSize; }
+
+
+    //Reverts the changed object back to original size when it's time. Called in Update
+    public void handleSizeReversion()
+    {
+        //Debug.Log("IsSizeChanged:" + getIsSizeChanged());
+        //Debug.Log("Expired:" + isChangeExpired());
+
+        if (this.isSizeChanged && isChangeExpired()) {
+
+
+            this.gm.transform.localScale = getOriginalSize();
+            setIsSizeChanged(false);
+
+
+        }
+
+        
+
+
+
+
+    }
+
 
 }
