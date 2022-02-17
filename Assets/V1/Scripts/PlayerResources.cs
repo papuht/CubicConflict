@@ -418,6 +418,7 @@ public class PlayerResources : NetworkBehaviour {
 
 
             this.gm.transform.localScale = getOriginalSize();
+            setIsSizeChanged(false);
 
 
         }
