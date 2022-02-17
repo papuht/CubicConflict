@@ -15,6 +15,10 @@ public class SpawnPoint : NetworkBehaviour {
         if the function should be ran on [Server], [Client] or called by client on server by [Command]
     */
 
+    private GameObject triangleSpawnUI;
+    private GameObject squareSpawnUI;
+    private GameObject pentagonSpawnUI;
+
     private double lastCheck;
 
     private bool started = false;
@@ -25,6 +29,12 @@ public class SpawnPoint : NetworkBehaviour {
 
     void Start() {
         this.lastCheck = Time.time;
+        this.triangleSpawnUI = GameObject.Find("SpawnImageTriangle");
+        this.squareSpawnUI = GameObject.Find("SpawnImageSquare");
+        this.pentagonSpawnUI = GameObject.Find("SpawnImagePentagon");
+
+        this.squareSpawnUI.SetActive(false);
+        this.pentagonSpawnUI.SetActive(false);
     }
 
     void Update() {
@@ -51,36 +61,45 @@ public class SpawnPoint : NetworkBehaviour {
         }
 
         //This is ugly but unity can't fetch the currently pressed keycode for a switch-case :(
-        if(Input.GetKeyDown("1")) { 
+        if(Input.GetKeyDown(KeyCode.A)) { 
             this.SwapSpawnOnServer("Triangle");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
-            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Triangle";
+            this.triangleSpawnUI.SetActive(true);
+            this.squareSpawnUI.SetActive(false);
+            this.pentagonSpawnUI.SetActive(false);
         }
-        else if(Input.GetKeyDown("2")) {
+        else if(Input.GetKeyDown(KeyCode.S)) {
             this.SwapSpawnOnServer("Square");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
-            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Square";
+            this.triangleSpawnUI.SetActive(false);
+            this.squareSpawnUI.SetActive(true);
+            this.pentagonSpawnUI.SetActive(false);
         }
-        else if(Input.GetKeyDown("3")) {
+        else if(Input.GetKeyDown(KeyCode.D)) {
             this.SwapSpawnOnServer("Pentagon");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
-            GameObject.Find("NextSpawn").GetComponent<Text>().text = "Spawning: Pentagon";
+            this.triangleSpawnUI.SetActive(false);
+            this.squareSpawnUI.SetActive(false);
+            this.pentagonSpawnUI.SetActive(true);
         }
-        else if(Input.GetKeyDown("4")) {
+        else if(Input.GetKeyDown(KeyCode.F)) {
             this.SwapSpawnOnServer("Octagon");
             Debug.Log(
                 "Current shape: " + cr.getSpawnShape().prefab + 
                 " | Current cd: " + cr.getSpawnCooldown()
             );
+            this.triangleSpawnUI.SetActive(false);
+            this.squareSpawnUI.SetActive(false);
+            this.pentagonSpawnUI.SetActive(true);
         }
 
     }
@@ -109,6 +128,9 @@ public class SpawnPoint : NetworkBehaviour {
 
             //Set color to object
             pr.setColor(GetComponent<ConnectionResources>().getTeamColor());
+
+            //Save type of prefab to be referenced later
+            pr.setType(cr.getSpawnShape().name);
 
             //Init default variables
             pr.initHitpoints(cr.getSpawnShape().hitpoints);

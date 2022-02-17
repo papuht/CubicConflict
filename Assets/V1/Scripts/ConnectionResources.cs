@@ -13,7 +13,11 @@ public class ConnectionResources : NetworkBehaviour {
 
     public GameObject aiSpawner;
 
+    public GameObject gm;
+
     protected int playerId;
+
+    
 
     /**
     * Shape prehabs can be dragged here from unity editor
@@ -89,6 +93,9 @@ public class ConnectionResources : NetworkBehaviour {
 
     protected bool singleplayer = false;
 
+
+    
+
     public virtual bool isReady() {
         return this.ready;
     }
@@ -129,6 +136,7 @@ public class ConnectionResources : NetworkBehaviour {
     }
 
     protected virtual void Start() {
+        Debug.Log(this.gm);
         //Handle local singleplayer
         this.singleplayer = PlayerPrefs.GetInt("singleplayer") == 1 ? true : false; 
 
@@ -136,7 +144,6 @@ public class ConnectionResources : NetworkBehaviour {
             this.initCountdown = true;
             this.countdown = 5;
             this.countdownCheck = Time.time;
-
             this.spawnAI();
         }
     }
@@ -282,7 +289,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Square":
                     shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 30,
+                        hitpoints = 20,
                         movementspeed = 11,
                         maxMovementspeed = 16,
                         rotationspeed = 200f,
@@ -295,7 +302,7 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Pentagon":
                     shape = new SpawnableShape {
                         prefab = prefab,
-                        hitpoints = 40,
+                        hitpoints = 30,
                         movementspeed = 7,
                         maxMovementspeed = 12,
                         rotationspeed = 150f,
@@ -308,13 +315,13 @@ public class ConnectionResources : NetworkBehaviour {
                 case "Octagon":
                     shape = new SpawnableShape{
                         prefab = prefab,
-                        hitpoints = 50, 
+                        hitpoints = 40, 
                         movementspeed = 3, 
                         maxMovementspeed = 8, 
                         rotationspeed = 100f, 
                         maxRotationspeed = 200f, 
                         cooldown = 14,
-                        name = "Hexagon"
+                        name = "Octagon"
                     };
                 break;
 
