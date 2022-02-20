@@ -370,7 +370,7 @@ public class PlayerResources : NetworkBehaviour {
 
    //method to track time for the reloading of change
     public bool isChangeReady() {
-        if ((Time.time - this.changeTimer) > 25)
+        if ((Time.time - this.changeTimer) > 50)
         {
             return true;
         }

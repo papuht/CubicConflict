@@ -320,7 +320,7 @@ public class PlayerMovement : NetworkBehaviour {
                 float distance = gm.GetComponent<PlayerResources>().getMovementSpeed() / 2;
 
                 //Try to dash
-                if(gm.GetComponent<PlayerResources>().isDashReady()) {
+                if(gm.GetComponent<PlayerResources>().isDashReady() && gm.GetComponent<PlayerResources>().getType() == "Triangle") {
                     gm.transform.position = Vector2.MoveTowards( 
                         gm.transform.position, 
                         mouse, 
