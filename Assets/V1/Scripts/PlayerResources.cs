@@ -14,6 +14,7 @@ public class PlayerResources : NetworkBehaviour {
     {
         this.gm = this.gameObject;
         handleSizeReversion();
+        
     }
 
     private SyncDictionary<string, string> storage = new SyncDictionary<string, string>();
@@ -75,6 +76,8 @@ public class PlayerResources : NetworkBehaviour {
     [SyncVar]
     public Vector2 originalSize;
 
+    [SyncVar]
+    public float healTimer = 0f;
     
 
 
@@ -429,6 +432,42 @@ public class PlayerResources : NetworkBehaviour {
 
 
     }
+    /*
+     * deprecated methods
+     * 
+    public void setIsHealing(bool healing) {
+    
+        this.isHealing = healing;
+        if (this.isHealing) {
+
+            resetHeal();
+        }
+    }
+
+
+    public bool getIsHealing() {
+
+        return this.isHealing;
+    }
+    */
+    public bool isHealReady()
+    {
+        if ((Time.time - this.healTimer) > 50)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    [Server]
+    public void resetHeal()
+    {
+        this.healTimer = Time.time;
+
+    }
+
+    
+
 
 
 }
