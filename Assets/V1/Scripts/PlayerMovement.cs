@@ -162,7 +162,7 @@ public class PlayerMovement : NetworkBehaviour {
                         this.handleSizeChange(); //TODO: Add new abilities
                         break;
                     case KeyCode.E:
-                        this.handleDash(); //TODO: Add new abilities
+                        this.handleHealing(); //TODO: Add new abilities
                         break;
                     case KeyCode.R:
                         this.handleDash(); //TODO: Add new abilities
@@ -320,7 +320,7 @@ public class PlayerMovement : NetworkBehaviour {
                 float distance = gm.GetComponent<PlayerResources>().getMovementSpeed() / 2;
 
                 //Try to dash
-                if(gm.GetComponent<PlayerResources>().isDashReady()) {
+                if(gm.GetComponent<PlayerResources>().isDashReady() && gm.GetComponent<PlayerResources>().getType() == "Triangle") {
                     gm.transform.position = Vector2.MoveTowards( 
                         gm.transform.position, 
                         mouse, 
@@ -421,6 +421,50 @@ public class PlayerMovement : NetworkBehaviour {
 
     }
 
+    public void handleHealing()
+    {
+
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
+        {
+
+            
+
+            //Make sure GameObject still exists
+            if (entry.Value != null)
+            {
+                GameObject gm = entry.Value;
+                Debug.Log(gm.GetComponent<PlayerResources>().isHealReady());
+                //Only works for square shape and only if the ability is ready
+                if (gm.GetComponent<PlayerResources>().getType() == "Square" && gm.GetComponent<PlayerResources>().isHealReady())
+
+                {
+                   
+                    RaycastHit2D[] res = new RaycastHit2D[100];
+                    ContactFilter2D filter = new ContactFilter2D();
+             
+                    int healing = Physics2D.CircleCast(gm.gameObject.transform.position, 5.0f, gm.gameObject.transform.position, filter.NoFilter(), res);
+                    Debug.Log("int healing:" +healing);
+                    for (int i = 0; i < healing; i++)
+                    {
+                        if (res[i].collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == gm.GetComponent<PlayerResources>().getPlayerId())
+                        {
+                            res[i].collider.gameObject.GetComponent<PlayerResources>().increaseHitpoints(30);
+                            
+                        }
+                    }
+                    gm.GetComponent<PlayerResources>().resetHeal();
+                }
+                }
+
+
+
+            }
+
+
+
+
+        }
+    
    
 
 
