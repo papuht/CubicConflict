@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Mirror;
+using System.Threading;
 
 public class PlayerMovement : NetworkBehaviour {
     private SelectionMap map;
@@ -87,52 +88,35 @@ public class PlayerMovement : NetworkBehaviour {
     }   
 
     public void initUsableControls() {
-
-        //Init simple key-inputs
-        foreach(KeyCode k in (new KeyCode[] {
-            //For optimization sake keep these in the most common usage order
-            KeyCode.Q,
-            KeyCode.W,
-            KeyCode.E,
-            KeyCode.R,
-            KeyCode.Space,
-            KeyCode.Alpha1,
-            KeyCode.Alpha2,
-            KeyCode.Alpha3,
-            KeyCode.Alpha4,
-            KeyCode.Alpha5,
-            KeyCode.T,
-            KeyCode.G,
-            /*
-            TODO: Need to move all controls to new class
-            KeyCode.A,
-            KeyCode.S,
-            KeyCode.D,
-            KeyCode.F,
-            */
-        })) {
-            this.initedKeys.Add(new KeyCombination{
-                key = k,
-                modifier = null,
-            });
-
-            //Also add ctrl modifiers for below keys
-            if(
-                (new KeyCode[] {
-                    KeyCode.Alpha1,
-                    KeyCode.Alpha2,
-                    KeyCode.Alpha3,
-                    KeyCode.Alpha4,
-                    KeyCode.Alpha5,
-                }).Contains(k)
-            ) {
-                this.initedKeys.Add(new KeyCombination{
-                    key = k,
-                    modifier = KeyCode.LeftShift
-                });
-            }
+        //Dont setup for AI
+        if(this.gameObject.GetComponent<AIResources>() != null) {
+            return;
         }
-    
+
+        ControlRouter router = this.gameObject.GetComponent<ControlRouter>();
+
+        //Register callback methods for control-groups: Normal
+        router.connectCallback(ControlRouter.Key.C1, handleControlGroupSelect1);
+        router.connectCallback(ControlRouter.Key.C2, handleControlGroupSelect2);
+        router.connectCallback(ControlRouter.Key.C3, handleControlGroupSelect3);
+        router.connectCallback(ControlRouter.Key.C4, handleControlGroupSelect4);
+
+        //Register callback methods for control-groups: With modifiers
+        router.connectCallback(ControlRouter.Modifier.SHIFT, ControlRouter.Key.C1, handleControlGroupUpdate1);
+        router.connectCallback(ControlRouter.Modifier.SHIFT, ControlRouter.Key.C2, handleControlGroupUpdate2);
+        router.connectCallback(ControlRouter.Modifier.SHIFT, ControlRouter.Key.C3, handleControlGroupUpdate3);
+        router.connectCallback(ControlRouter.Modifier.SHIFT, ControlRouter.Key.C4, handleControlGroupUpdate4);
+
+        //Register callback methods for abilities
+        router.connectCallback(ControlRouter.Key.A1, handleDash);
+        router.connectCallback(ControlRouter.Key.A2, handleSizeChange);
+        router.connectCallback(ControlRouter.Key.A3, handleHealing);
+        router.connectCallback(ControlRouter.Key.A4, handleDash); //TODO: 4th ability
+
+        //Register callback methods for Misc controls
+        router.connectCallback(ControlRouter.Key.M1, handleShowSpawner);
+        router.connectCallback(ControlRouter.Key.M2, handleIncreaseRotation);
+        router.connectCallback(ControlRouter.Key.M3, handleDecreaseRotation);
     }
     
 
@@ -143,96 +127,20 @@ public class PlayerMovement : NetworkBehaviour {
         if(Input.GetMouseButtonUp(1)) {
             this.handleMoveToClick();
         }
-        this.handleKeyInput();
         this.handleAutoMove();
     }
 
-    public void handleKeyInput() {
-        //Loop inited keys see if one is pressed
-        foreach(KeyCombination kc in this.initedKeys) {
-            //Check if main key is pressed 
-            if(Input.GetKeyUp(kc.key)) {
+    //Spam of Callable actions since Lassi was too lazy to make generalized parameter support for callbacks :(   
+    public void handleControlGroupUpdate1() {this.map.setControlGroup(1);}
+    public void handleControlGroupUpdate2() {this.map.setControlGroup(2);}
+    public void handleControlGroupUpdate3() {this.map.setControlGroup(3);}
+    public void handleControlGroupUpdate4() {this.map.setControlGroup(4);}
 
-                //Input handler
-                switch(kc.key) {
-                    case KeyCode.Q:
-                        this.handleDash();
-                        break;
-                    case KeyCode.W:
-                        this.handleSizeChange(); //TODO: Add new abilities
-                        break;
-                    case KeyCode.E:
-                        this.handleHealing(); //TODO: Add new abilities
-                        break;
-                    case KeyCode.R:
-                        this.handleDash(); //TODO: Add new abilities
-                        break;  
-                    case KeyCode.Space:
-                        //Space has another function elsewhere with modifier shift
-                        if(!Input.GetKey(KeyCode.LeftShift)) {
-                            this.handleShowSpawner();
-                        }
-                        break;
-                    case KeyCode.Alpha1:
-                        if(kc.modifier == null) {
-                            this.handleControlGroupSelect(1);
-                        }
-                        else if(Input.GetKey((KeyCode) kc.modifier)) {
-                            this.handleControlGroupUpdate(1);
-                        }
-                        break;
-                    case KeyCode.Alpha2:
-                        if(kc.modifier == null) {
-                            this.handleControlGroupSelect(2);
-                        }
-                        else if(Input.GetKey((KeyCode) kc.modifier)) {
-                            this.handleControlGroupUpdate(2);
-                        }
-                        break;
-                    case KeyCode.Alpha3:
-                        if(kc.modifier == null) {
-                            this.handleControlGroupSelect(3);
-                        }
-                        else if(Input.GetKey((KeyCode) kc.modifier)) {
-                            this.handleControlGroupUpdate(3);
-                        }
-                        break;
-                    case KeyCode.Alpha4:
-                        if(kc.modifier == null) {
-                            this.handleControlGroupSelect(4);
-                        }
-                        else if(Input.GetKey((KeyCode) kc.modifier)) {
-                            this.handleControlGroupUpdate(4);
-                        }
-                        break;
-                    case KeyCode.Alpha5:
-                        if(kc.modifier == null) {
-                            this.handleControlGroupSelect(5);
-                        }
-                        else if(Input.GetKey((KeyCode) kc.modifier)) {
-                            this.handleControlGroupUpdate(5);
-                        }
-                        break;
-                    case KeyCode.T:
-                        handleIncreaseRotation();
-                        break;
-                    case KeyCode.G:
-                        handleDecreaseRotation();
-                        break;
-                }
-            }
-        }
-    }
+    public void handleControlGroupSelect1() {this.map.useControlGroup(1);}
+    public void handleControlGroupSelect2() {this.map.useControlGroup(2);}
+    public void handleControlGroupSelect3() {this.map.useControlGroup(3);}
+    public void handleControlGroupSelect4() {this.map.useControlGroup(4);}
 
-    public void handleControlGroupUpdate(int groupIndex) {
-        Debug.Log("SET CONTROL GROUP " + groupIndex);
-        this.map.setControlGroup(groupIndex);
-    }
-
-    public void handleControlGroupSelect(int groupIndex) {
-        Debug.Log("USE CONTROL GROUP " + groupIndex);
-        this.map.useControlGroup(groupIndex);
-    }
 
     public void handleAutoMove() {
         //Go through moving objects and move them towards the destination
@@ -382,88 +290,59 @@ public class PlayerMovement : NetworkBehaviour {
 
 
     public void handleSizeChange() {
-
-        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
-        {
-           
-
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+        
             //Make sure GameObject still exists
-            if (entry.Value != null)
-            {
+            if (entry.Value != null) {
                 GameObject gm = entry.Value;
 
                 //Only works for pentagon shape and only if it's not already changed
-                if(gm.GetComponent<PlayerResources>().getType() == "Pentagon" && (gm.GetComponent<PlayerResources>().getIsSizeChanged() == false))
-
-                {
-                    
-                    Vector2 temp;
-                                    
+                if(gm.GetComponent<PlayerResources>().getType() == "Pentagon" && (gm.GetComponent<PlayerResources>().getIsSizeChanged() == false)) {
+                    Vector2 temp;        
                     temp = gm.transform.localScale;
                     gm.GetComponent<PlayerResources>().setOriginalSize(temp);
                     temp.x += 3.0f;
                     temp.y += 3.0f;
 
-
-
-
-                    if (gm.GetComponent<PlayerResources>().isChangeReady())
-                    {
+                    if (gm.GetComponent<PlayerResources>().isChangeReady()) {
                         gm.transform.localScale = temp;
                         gm.GetComponent<PlayerResources>().setIsSizeChanged(true);
                         CMDResetChange(gm);
                         CMDResetExpire(gm);
                     }
-
                 }
             }
         }
-
     }
 
-    public void handleHealing()
-    {
-
-        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects())
-        {
-
-            
-
+    public void handleHealing() {
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
             //Make sure GameObject still exists
-            if (entry.Value != null)
-            {
+            if (entry.Value != null) {
                 GameObject gm = entry.Value;
                 Debug.Log(gm.GetComponent<PlayerResources>().isHealReady());
                 //Only works for square shape and only if the ability is ready
-                if (gm.GetComponent<PlayerResources>().getType() == "Square" && gm.GetComponent<PlayerResources>().isHealReady())
-
-                {
+                if (gm.GetComponent<PlayerResources>().getType() == "Square" && gm.GetComponent<PlayerResources>().isHealReady()) {
                    
                     RaycastHit2D[] res = new RaycastHit2D[100];
                     ContactFilter2D filter = new ContactFilter2D();
              
                     int healing = Physics2D.CircleCast(gm.gameObject.transform.position, 5.0f, gm.gameObject.transform.position, filter.NoFilter(), res);
                     Debug.Log("int healing:" +healing);
-                    for (int i = 0; i < healing; i++)
-                    {
-                        if (res[i].collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == gm.GetComponent<PlayerResources>().getPlayerId())
-                        {
+                    for (int i = 0; i < healing; i++) {
+                        if (
+                            res[i].collider.gameObject.tag == "Player"
+                            && gm.tag == "Player"
+                            && res[i].collider.gameObject.GetComponent<PlayerResources>().getPlayerId() == gm.GetComponent<PlayerResources>().getPlayerId()
+                        ) {
                             res[i].collider.gameObject.GetComponent<PlayerResources>().increaseHitpoints(30);
-                            
                         }
                     }
                     gm.GetComponent<PlayerResources>().resetHeal();
                 }
-                }
-
-
-
             }
-
-
-
-
         }
+    }
     
    
 

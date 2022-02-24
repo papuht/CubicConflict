@@ -358,13 +358,34 @@ public class PlayerResources : NetworkBehaviour {
 
     }
 
+    private static int dashCD = 8;
+    private static int healCD = 50;
+    private static int growCD = 40;
+
     public float getAbilityCooldown() {
-        int cd = (int) (8 - (Time.time - this.dashTimer));
-        return (cd < 0 ? 0 : cd);
+
+        //Silly fix that trusts certain shapes are using certain abilities
+        int flatCD = 0;
+        switch(this.type) {
+            case "Triangle": //Dash cd
+                flatCD = (int) (dashCD - (Time.time - this.dashTimer));
+                break;
+            case "Square": //Heal cd
+                flatCD = (int) (healCD - (Time.time - this.healTimer));
+                break;
+            case "Pentagon": //Grow cd
+                flatCD = (int) (growCD - (Time.time - this.changeTimer));
+                break; 
+             case "Octagon": //TODO:
+                flatCD = (int) (growCD - (Time.time - this.dashTimer));
+                break;        
+        }
+
+        return (flatCD < 0 ? 0 : flatCD);
     }
 
     public bool isDashReady() {
-        if((Time.time - this.dashTimer) > 8) {
+        if((Time.time - this.dashTimer) > dashCD) {
             return true;
         }
         return false;
@@ -373,7 +394,7 @@ public class PlayerResources : NetworkBehaviour {
 
    //method to track time for the reloading of change
     public bool isChangeReady() {
-        if ((Time.time - this.changeTimer) > 50)
+        if ((Time.time - this.changeTimer) > growCD)
         {
             return true;
         }
@@ -384,7 +405,7 @@ public class PlayerResources : NetworkBehaviour {
     //Method to track time for the duration of the change
     public bool isChangeExpired() {
 
-        if ((Time.time - this.expireTimer) > 30)
+        if ((Time.time - this.expireTimer) > 20)
         {
             return true;
         }
@@ -418,22 +439,26 @@ public class PlayerResources : NetworkBehaviour {
         //Debug.Log("Expired:" + isChangeExpired());
 
         if (this.isSizeChanged && isChangeExpired()) {
-
-
             this.gm.transform.localScale = getOriginalSize();
             setIsSizeChanged(false);
-
-
         }
-
-        
-
-
-
-
     }
+
+    public bool isHealReady() {
+        if ((Time.time - this.healTimer) > healCD) {
+            return true;
+        }
+        return false;
+    }
+
+    [Server]
+    public void resetHeal() {
+        this.healTimer = Time.time;
+    }
+
     /*
      * deprecated methods
+     * TODO: Delete when sure
      * 
     public void setIsHealing(bool healing) {
     
@@ -450,23 +475,6 @@ public class PlayerResources : NetworkBehaviour {
         return this.isHealing;
     }
     */
-    public bool isHealReady()
-    {
-        if ((Time.time - this.healTimer) > 50)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    [Server]
-    public void resetHeal()
-    {
-        this.healTimer = Time.time;
-
-    }
-
-    
 
 
 

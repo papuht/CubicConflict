@@ -62,7 +62,14 @@ public class SelectionMap : MonoBehaviour
 
                 if(this.selectedUnitsUI.ContainsKey(entry.Key)) {
                     //Update already existing UI
-                    this.selectedUnitsUI[entry.Key].GetComponent<ShapeUIHandler>().refresh(entry.Value);
+                    GameObject existingUI = this.selectedUnitsUI[entry.Key];
+                    existingUI.transform.localPosition = new Vector3(
+                        this.UITriangle.transform.position.x + (index > 10 ? (index * 50 - 550) : (index * 50)),
+                        this.UITriangle.transform.position.y + (index > 10 ? -50 : 0),
+                        this.UITriangle.transform.position.z
+                    );
+                    existingUI.GetComponent<ShapeUIHandler>().refresh(entry.Value);
+
                 }
                 else if(index <= 22) {
                     //Create new UI displays for selected shapes
@@ -81,6 +88,7 @@ public class SelectionMap : MonoBehaviour
                 }
                 index++;
             }
+            
         }
     }
 
