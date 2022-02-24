@@ -35,6 +35,16 @@ public class SpawnPoint : NetworkBehaviour {
 
         this.squareSpawnUI.SetActive(false);
         this.pentagonSpawnUI.SetActive(false);
+
+        //Only setup if not AI
+        if(this.GetComponent<AIResources>() == null) {
+            ControlRouter router = this.gameObject.GetComponent<ControlRouter>();
+            router.connectCallback(ControlRouter.Key.S1, setSpawnShapeTriangle);
+            router.connectCallback(ControlRouter.Key.S2, setSpawnShapeSquare);
+            router.connectCallback(ControlRouter.Key.S3, setSpawnShapePentagon);
+            router.connectCallback(ControlRouter.Key.S4, setSpawnShapeOctagon);
+        }
+        
     }
 
     void Update() {
@@ -59,49 +69,54 @@ public class SpawnPoint : NetworkBehaviour {
             this.SpawnOnServer();
             this.lastCheck = Time.time;
         }
+    }
+    public void setSpawnShapeTriangle() {
+        ConnectionResources cr = this.GetComponent<ConnectionResources>();
 
-        //This is ugly but unity can't fetch the currently pressed keycode for a switch-case :(
-        if(Input.GetKeyDown(KeyCode.A)) { 
-            this.SwapSpawnOnServer("Triangle");
-            Debug.Log(
-                "Current shape: " + cr.getSpawnShape().prefab + 
-                " | Current cd: " + cr.getSpawnCooldown()
-            );
-            this.triangleSpawnUI.SetActive(true);
-            this.squareSpawnUI.SetActive(false);
-            this.pentagonSpawnUI.SetActive(false);
-        }
-        else if(Input.GetKeyDown(KeyCode.S)) {
-            this.SwapSpawnOnServer("Square");
-            Debug.Log(
-                "Current shape: " + cr.getSpawnShape().prefab + 
-                " | Current cd: " + cr.getSpawnCooldown()
-            );
-            this.triangleSpawnUI.SetActive(false);
-            this.squareSpawnUI.SetActive(true);
-            this.pentagonSpawnUI.SetActive(false);
-        }
-        else if(Input.GetKeyDown(KeyCode.D)) {
-            this.SwapSpawnOnServer("Pentagon");
-            Debug.Log(
-                "Current shape: " + cr.getSpawnShape().prefab + 
-                " | Current cd: " + cr.getSpawnCooldown()
-            );
-            this.triangleSpawnUI.SetActive(false);
-            this.squareSpawnUI.SetActive(false);
-            this.pentagonSpawnUI.SetActive(true);
-        }
-        else if(Input.GetKeyDown(KeyCode.F)) {
-            this.SwapSpawnOnServer("Octagon");
-            Debug.Log(
-                "Current shape: " + cr.getSpawnShape().prefab + 
-                " | Current cd: " + cr.getSpawnCooldown()
-            );
-            this.triangleSpawnUI.SetActive(false);
-            this.squareSpawnUI.SetActive(false);
-            this.pentagonSpawnUI.SetActive(true);
-        }
+        this.SwapSpawnOnServer("Triangle");
+        Debug.Log(
+            "Current shape: " + cr.getSpawnShape().prefab + 
+            " | Current cd: " + cr.getSpawnCooldown()
+        );
+        this.triangleSpawnUI.SetActive(true);
+        this.squareSpawnUI.SetActive(false);
+        this.pentagonSpawnUI.SetActive(false);
+    }
+    public void setSpawnShapeSquare() {
+        ConnectionResources cr = this.GetComponent<ConnectionResources>();
 
+        this.SwapSpawnOnServer("Square");
+        Debug.Log(
+            "Current shape: " + cr.getSpawnShape().prefab + 
+            " | Current cd: " + cr.getSpawnCooldown()
+        );
+        this.triangleSpawnUI.SetActive(false);
+        this.squareSpawnUI.SetActive(true);
+        this.pentagonSpawnUI.SetActive(false);
+    }
+    public void setSpawnShapePentagon() {
+        ConnectionResources cr = this.GetComponent<ConnectionResources>();
+
+        this.SwapSpawnOnServer("Pentagon");
+        Debug.Log(
+            "Current shape: " + cr.getSpawnShape().prefab + 
+            " | Current cd: " + cr.getSpawnCooldown()
+        );
+        this.triangleSpawnUI.SetActive(false);
+        this.squareSpawnUI.SetActive(false);
+        this.pentagonSpawnUI.SetActive(true);
+    }
+    public void setSpawnShapeOctagon() {
+        ConnectionResources cr = this.GetComponent<ConnectionResources>();
+
+        this.SwapSpawnOnServer("Octagon");
+        Debug.Log(
+            "Current shape: " + cr.getSpawnShape().prefab + 
+            " | Current cd: " + cr.getSpawnCooldown()
+        );
+        this.triangleSpawnUI.SetActive(false);
+        this.squareSpawnUI.SetActive(false);
+        this.pentagonSpawnUI.SetActive(true);
     }
 
     [Command]
