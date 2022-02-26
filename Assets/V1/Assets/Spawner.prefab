@@ -284,6 +284,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  rallyPointPrefab: {fileID: 3382600205314637454, guid: d570b525bf3a30f4eb671898b59ba53a, type: 3}
 --- !u!114 &3176005668961361031
 MonoBehaviour:
   m_ObjectHideFlags: 0

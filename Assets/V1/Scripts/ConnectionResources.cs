@@ -50,6 +50,9 @@ public class ConnectionResources : NetworkBehaviour {
     [SyncVar]
     protected double countdown;
 
+    [SyncVar]
+    protected Vector2 rallyPoint;
+
     protected double countdownCheck;
 
     public SpawnableShape getSpawnShape() {
@@ -71,6 +74,15 @@ public class ConnectionResources : NetworkBehaviour {
             return true;
         }
         return false;
+    }
+
+    public Vector2 getRallyPoint() {
+        return this.rallyPoint;
+    }
+
+    [Server]
+    public void setRallyPoint(Vector2 point) {
+        this.rallyPoint = point;
     }
 
     public Color getTeamColor() {
@@ -254,6 +266,8 @@ public class ConnectionResources : NetworkBehaviour {
              this.initCountdown = false;
 
              this.initSpawnableObjects();
+
+             this.rallyPoint = this.gameObject.transform.position;
          }
 
          //Fetch Camera and set it to our spawn

@@ -288,6 +288,15 @@ public class PlayerMovement : NetworkBehaviour {
         GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
     }
 
+    public void remoteNewObjToMovementGroup(GameObject gm, Vector2 destination) {
+        if(gm == null) {
+            return;
+        }
+        this.movingObjects.Add(
+            gm.GetInstanceID(), 
+            new MovingObject(gm, destination)
+        );
+    }
 
     public void handleSizeChange() {
         foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
