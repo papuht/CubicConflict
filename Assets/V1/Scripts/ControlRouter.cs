@@ -25,7 +25,7 @@ public class ControlRouter : MonoBehaviour {
 
     void Update() {
         
-        //Choose which mapping to user based on modifier
+        //Choose which mapping to use based on modifier
         Dictionary<Key, KeyValuePair<KeyCode, Action?>> currentKeyMap = this.mainKeyMap;
         if(Input.GetKey(KeyCode.LeftShift)) {
             currentKeyMap = this.shiftKeyMap;

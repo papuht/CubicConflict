@@ -19,6 +19,8 @@ public class SpawnPoint : NetworkBehaviour {
     private GameObject squareSpawnUI;
     private GameObject pentagonSpawnUI;
 
+    public GameObject rallyPointPrefab;
+    private GameObject rallyPointIndicator;
     private double lastCheck;
 
     private bool started = false;
@@ -43,6 +45,7 @@ public class SpawnPoint : NetworkBehaviour {
             router.connectCallback(ControlRouter.Key.S2, setSpawnShapeSquare);
             router.connectCallback(ControlRouter.Key.S3, setSpawnShapePentagon);
             router.connectCallback(ControlRouter.Key.S4, setSpawnShapeOctagon);
+            router.connectCallback(ControlRouter.Key.M4, setupRallyPoint);
         }
         
     }
@@ -125,6 +128,31 @@ public class SpawnPoint : NetworkBehaviour {
         Debug.Log("Swapping spawn to " + shapeName + " - " + result);
     } 
 
+    public void setupRallyPoint() {
+        Vector2 mousePoint = Camera.main.ScreenToWorldPoint(new Vector2(Input.mousePosition.x, Input.mousePosition.y));
+
+
+        if(this.rallyPointIndicator != null) {
+            Destroy(this.rallyPointIndicator);
+        }
+
+        GameObject rallyPoint = Instantiate(
+            this.rallyPointPrefab, 
+            mousePoint, 
+            Quaternion.identity
+        );
+
+        this.rallyPointIndicator = rallyPoint;
+
+        this.SetRallyPointOnServer(mousePoint);
+    }
+
+    [Command]
+    public void SetRallyPointOnServer(Vector2 point) {
+        ConnectionResources cr = GetComponent<ConnectionResources>();
+        cr.setRallyPoint(point);
+    } 
+
     [Command] //Command tag == This should be ran on the server, but the client commands it to do so
     public void SpawnOnServer() {
 
@@ -159,6 +187,10 @@ public class SpawnPoint : NetworkBehaviour {
 
             //This spawns the object for all clients and also tells networkmanager who is the owner
             NetworkServer.Spawn(spawnablePlayer, connectionToClient); 
+
+            //Add new shape to rally point
+            PlayerMovement pm = GetComponent<PlayerMovement>();
+            pm.remoteNewObjToMovementGroup(spawnablePlayer, cr.getRallyPoint());
     }
 
 
