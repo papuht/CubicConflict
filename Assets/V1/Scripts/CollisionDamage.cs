@@ -83,7 +83,13 @@ public class CollisionDamage : NetworkBehaviour {
                 ) / 2;
                     //Force can be added localy since a NetworkRigidBodt2D component handles the force over the network
                     Vector2 direction = myObject.gameObject.transform.position - enemyObject.gameObject.transform.position;
-                    myObject.gameObject.GetComponent<Rigidbody2D>().AddForce((direction * avgMs) * 5);
+
+                    int knockoutModifier = 1;
+                    Debug.Log(enemyObject.GetComponent<PlayerResources>().isKnockoutEnabled());
+                    if(enemyObject.GetComponent<PlayerResources>().isKnockoutEnabled()) {
+                        knockoutModifier = 25;
+                    }
+                    myObject.gameObject.GetComponent<Rigidbody2D>().AddForce((direction * avgMs) * 5 * knockoutModifier);
                     CMDResetMovement(myObject.gameObject);
                 }
             }

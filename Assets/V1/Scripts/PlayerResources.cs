@@ -8,13 +8,13 @@ public class PlayerResources : NetworkBehaviour {
 
     void Start() {
         this.setSpriteColor(this.color);
+        this.gm = this.gameObject;
     }
 
-    private void Update()
-    {
-        this.gm = this.gameObject;
-        handleSizeReversion();
-        
+    private void Update() {
+        //Handle abilities with an expiration timer
+        this.handleSizeReversion();
+        this.handleKnockoutStatus();
     }
 
     private SyncDictionary<string, string> storage = new SyncDictionary<string, string>();
@@ -50,35 +50,40 @@ public class PlayerResources : NetworkBehaviour {
     private float maxRotationspeed = 1000f;
 
     [SyncVar]
-    public ConnectionResources cr;
+    private ConnectionResources cr;
 
     [SyncVar]
-    public float dashTimer = 0f;
+    private float dashTimer = 0f;
 
     [SyncVar]
-    public float changeTimer = 0f;
+    private float changeTimer = 0f;
 
     [SyncVar]
-    public float expireTimer = 0f;
+    private float expireTimer = 0f;
     
     [SyncVar]
-    public bool clearMovement;
+    private bool clearMovement;
 
     [SyncVar]
-    public string type;
+    private string type;
 
     [SyncVar]
-    public bool isAI = false;
+    private bool isAI = false;
 
     [SyncVar]
-    public bool isSizeChanged = false;
+    private bool isSizeChanged = false;
 
     [SyncVar]
-    public Vector2 originalSize;
+    private Vector2 originalSize;
 
     [SyncVar]
-    public float healTimer = 0f;
+    private float healTimer = 0f;
     
+    [SyncVar]
+    private float knockoutTimer  = 0f;
+
+    [SyncVar]
+    private bool knockoutEnabled = false;
 
 
     /**
@@ -361,6 +366,7 @@ public class PlayerResources : NetworkBehaviour {
     private static int dashCD = 8;
     private static int healCD = 50;
     private static int growCD = 40;
+    private static int knockoutCD = 30;
 
     public float getAbilityCooldown() {
 
@@ -377,7 +383,7 @@ public class PlayerResources : NetworkBehaviour {
                 flatCD = (int) (growCD - (Time.time - this.changeTimer));
                 break; 
              case "Octagon": //TODO:
-                flatCD = (int) (growCD - (Time.time - this.dashTimer));
+                flatCD = (int) (knockoutCD - (Time.time - this.knockoutTimer));
                 break;        
         }
 
@@ -454,6 +460,47 @@ public class PlayerResources : NetworkBehaviour {
     [Server]
     public void resetHeal() {
         this.healTimer = Time.time;
+    }
+
+    public bool isKnockoutReady() {
+         if ((Time.time - this.knockoutTimer) > knockoutCD) {
+            return true;
+        }
+        return false;
+    }
+
+    public bool isKnockoutEnabled() {
+        return this.knockoutEnabled;
+    }
+
+    [Server]
+    public void setKnockoutActivation(bool active) {
+        this.knockoutEnabled = active;
+        this.resetKnockout();
+    }
+
+    public bool isKnockoutExpired() {
+        if ((Time.time - this.knockoutTimer) > 5) {
+            return true;
+        }
+        return false;
+    }
+
+    public void resetKnockout() {
+        this.knockoutTimer = Time.time;
+    }
+
+    public void handleKnockoutStatus() {
+        if(!this.isKnockoutEnabled()) {
+            return;
+        }
+
+        if(this.isKnockoutExpired()) {
+            this.setKnockoutActivation(false);
+        }
+        else {
+            this.gameObject.GetComponentInChildren<SpriteRenderer>().material.color = Color.yellow;
+        }
     }
 
     /*

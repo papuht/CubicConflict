@@ -105,14 +105,20 @@ public class AIBehavior : MonoBehaviour
     */
 
     /* method for moving AI pawns*/
-    private void Movement(Vector2 destination, GameObject ai)
-    {
-        PlayerMovement.MovingObject move = new PlayerMovement.MovingObject(ai, destination);
-        if (!move.move())
-        {
-            //Clear force from a collision (or if the shape happens to be stuck)
-            this.ai.GetComponent<PlayerResources>().resetMovement(false);
+    private void Movement(Vector2 destination, GameObject ai) {
+        
+        //Don't spam movement when destination has already been rechead
+        if(System.Math.Abs(Vector2.Distance(ai.transform.position, destination)) < 3) {
+            return;
         }
+
+        //Reset collision forces
+        ai.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        ai.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0f;
+
+        AIResources aiRes = (AIResources)GetComponent<PlayerResources>().getConnectionResources();
+        PlayerMovement pm = aiRes.gameObject.GetComponent<PlayerMovement>();
+        pm.remoteHandleMovingObject(ai, destination);
     }
 
     private void ControlCheck()

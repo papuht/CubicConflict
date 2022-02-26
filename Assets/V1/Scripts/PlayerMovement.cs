@@ -77,6 +77,14 @@ public class PlayerMovement : NetworkBehaviour {
         gm.GetComponent<PlayerResources>().resetExpire();
     }
 
+    [Command]
+    public void CMDEnableKnockout(GameObject gm) {
+        if(gm == null) {
+            return;
+        }
+        gm.GetComponent<PlayerResources>().setKnockoutActivation(true);
+    }
+
     void Start() {
         this.map = GetComponent<SelectionMap>(); //Map of selected objects
         this.dashTimer = Time.time;
@@ -111,7 +119,7 @@ public class PlayerMovement : NetworkBehaviour {
         router.connectCallback(ControlRouter.Key.A1, handleDash);
         router.connectCallback(ControlRouter.Key.A2, handleSizeChange);
         router.connectCallback(ControlRouter.Key.A3, handleHealing);
-        router.connectCallback(ControlRouter.Key.A4, handleDash); //TODO: 4th ability
+        router.connectCallback(ControlRouter.Key.A4, handleKnockout);
 
         //Register callback methods for Misc controls
         router.connectCallback(ControlRouter.Key.M1, handleShowSpawner);
@@ -288,14 +296,39 @@ public class PlayerMovement : NetworkBehaviour {
         GameObject.Find("Main Camera").GetComponent<Camera>().transform.position = this.gameObject.transform.position;
     }
 
-    public void remoteNewObjToMovementGroup(GameObject gm, Vector2 destination) {
+    public void remoteHandleMovingObject(GameObject gm, Vector2 destination) {
         if(gm == null) {
             return;
         }
-        this.movingObjects.Add(
-            gm.GetInstanceID(), 
-            new MovingObject(gm, destination)
-        );
+
+        int gmID = gm.GetInstanceID();
+
+        if(
+            this.movingObjects.ContainsKey(gmID) 
+            && this.movingObjects[gmID] != null
+        ) {
+            this.movingObjects[gmID].destination = destination;
+        }
+        else {
+            this.movingObjects.Add(gmID, new MovingObject(gm, destination));
+        }
+    }
+
+    public void handleKnockout() {
+        foreach (KeyValuePair<int, GameObject> entry in this.map.getSelectedObjects()) {
+            //Make sure GameObject still exists
+            if (entry.Value != null) {
+                GameObject gm = entry.Value;
+
+                //Only works for octagon shape and only if it's not already changed
+                if(
+                    gm.GetComponent<PlayerResources>().getType() == "Octagon"
+                    && gm.GetComponent<PlayerResources>().isKnockoutReady()
+                ) {
+                    this.CMDEnableKnockout(gm);
+                }
+            }
+        }
     }
 
     public void handleSizeChange() {

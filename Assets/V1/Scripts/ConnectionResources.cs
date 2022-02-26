@@ -330,7 +330,7 @@ public class ConnectionResources : NetworkBehaviour {
                     shape = new SpawnableShape{
                         prefab = prefab,
                         hitpoints = 40, 
-                        movementspeed = 3, 
+                        movementspeed = 4, 
                         maxMovementspeed = 8, 
                         rotationspeed = 100f, 
                         maxRotationspeed = 200f, 
