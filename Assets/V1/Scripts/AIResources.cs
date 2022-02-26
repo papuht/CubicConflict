@@ -50,7 +50,9 @@ public class AIResources : ConnectionResources {
     //Override On start function so nothing silly happens
     protected override void Start() {}
 
-    protected override void Update() {}
+    protected override void Update() {
+        GetComponent<PlayerMovement>().handleAutoMove();
+    }
 
     public override void OnStartClient() {}
 

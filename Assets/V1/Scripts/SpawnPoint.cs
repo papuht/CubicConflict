@@ -190,7 +190,7 @@ public class SpawnPoint : NetworkBehaviour {
 
             //Add new shape to rally point
             PlayerMovement pm = GetComponent<PlayerMovement>();
-            pm.remoteNewObjToMovementGroup(spawnablePlayer, cr.getRallyPoint());
+            pm.remoteHandleMovingObject(spawnablePlayer, cr.getRallyPoint());
     }
 
 

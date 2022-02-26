@@ -34,13 +34,20 @@ public class ControlRouter : MonoBehaviour {
             currentKeyMap = this.ctrlKeyMap;
         }
 
-        //Since modifiers are now established lets loop trough them
+        //Since modifiers are now established lets loop trough the correct keyMap
         foreach(KeyValuePair<Key, KeyValuePair<KeyCode, Action>> entry in currentKeyMap) {
             if(
-                entry.Value.Value != null
-                && Input.GetKeyUp(entry.Value.Key)
+                entry.Value.Value != null //Check if a callback funtion is registered
+                && Input.GetKeyUp(entry.Value.Key) //Check if Registered key is currently pressed
             ) {
                 entry.Value.Value(); //Use Callback function
+
+                /**
+                * Explanation:
+                * entry == KeyValuePair<Key, KeyValuePair<KeyCode, Action>>
+                * .Value == KeyValuePair<KeyCode, Action>
+                * .Value() == Action() == Registered callback function
+                */
             }
         } 
     }
