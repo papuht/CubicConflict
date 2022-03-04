@@ -503,6 +503,28 @@ public class PlayerResources : NetworkBehaviour {
         }
     }
 
+
+    public void setHealTimer(float time) { 
+        this.healTimer = time;
+    }
+
+    public void setKnockoutTimer(float time)
+    {
+        this.knockoutTimer = time;
+    }
+
+    public void setDashTimer(float time)
+    {
+        this.dashTimer = time;
+    }
+
+    public void setChangeTimer(float time)
+    {
+        this.changeTimer = time;
+    }
+
+
+
     /*
      * deprecated methods
      * TODO: Delete when sure
