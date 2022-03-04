@@ -15,12 +15,12 @@ public class ForceField : NetworkBehaviour
     * 
     * This is a good way to save some random data that we dont want permanent gets and sets for (like this one)
     */
-    const string storageKey = "pre-river-ms";
+    const string storageKey = "pre-field-damage";
 
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("Enter");
+        Debug.Log("Entering reload depot");
 
         if (collider.gameObject.tag != "Player")
         {
@@ -31,40 +31,30 @@ public class ForceField : NetworkBehaviour
 
         //Check if river ms reduce effect is already in place, by trying to get the previous ms value
         //"" is the default value returned by the getter == empty
-        if (pr.getFromStorage(storageKey) == "")
+       if (!collider.gameObject.GetComponent<PlayerResources>().isHealReady())
         {
+            collider.gameObject.GetComponent<PlayerResources>().setHealTimer(0f); 
 
-            //Add old ms to storage with our key "pre-river-ms"
-            pr.addToStorage(storageKey, pr.getMovementSpeed().ToString());
+        }
 
-            //Old reduction logic
-            pr.reduceMovementSpeed(20);
-            if (pr.getMovementSpeed() < 3)
-            {
-                pr.setMovementSpeed(3);
-            }
+        if (!collider.gameObject.GetComponent<PlayerResources>().isDashReady())
+        {
+            collider.gameObject.GetComponent<PlayerResources>().setDashTimer(0f);
+
+        }
+        if (!collider.gameObject.GetComponent<PlayerResources>().isKnockoutReady())
+        {
+            collider.gameObject.GetComponent<PlayerResources>().setKnockoutTimer(0f);  
+
+        }
+        if (!collider.gameObject.GetComponent<PlayerResources>().isChangeReady())
+        {
+            collider.gameObject.GetComponent <PlayerResources>().setChangeTimer(0f);    
+
         }
 
     }
 
-    public void OnTriggerExit2D(Collider2D collider)
-    {
-        if (collider.gameObject.tag != "Player")
-        {
-            return;
-        }
-
-        //Now we get the saved value with the same key and set the ms according to it
-        PlayerResources pr = collider.gameObject.GetComponent<PlayerResources>();
-        //getAndDelete because keeping a huge list of random values for each shape is not good for the RAM :o
-        string foundSpeed = pr.getAndDeleteFromStorage(storageKey);
-
-        //Check that value wasn't deleted already (causes error while parsing if it is)
-        if (foundSpeed != "")
-        {
-            //Since storage only allows for general string we have to parse the saved int put of it
-            pr.setMovementSpeed(System.Int32.Parse(foundSpeed));
-        }
-    }
+   
 
 }
