@@ -419,7 +419,7 @@ public class PlayerResources : NetworkBehaviour {
     //Method to track time for the duration of the change
     public bool isChangeExpired() {
 
-        if ((Time.time - this.expireTimer) > 20)
+        if ((Time.time - this.expireTimer) > 10)
         {
             return true;
         }
