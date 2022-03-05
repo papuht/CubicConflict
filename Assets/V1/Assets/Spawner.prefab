@@ -19,6 +19,8 @@ GameObject:
   - component: {fileID: 3176005668961361031}
   - component: {fileID: 3165117590727923680}
   - component: {fileID: -2608705707708055624}
+  - component: {fileID: -6856741102281225296}
+  - component: {fileID: 4347359376525462795}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: GameController
@@ -81,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
-  m_Color: {r: 0.8584906, g: 0.09313814, b: 0.09313814, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -100,7 +102,7 @@ AudioSource:
   m_GameObject: {fileID: 3381073493851452118}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4857733669513655621, guid: d7676b444c0011142b5b5aa60fd6bc50, type: 2}
   m_audioClip: {fileID: 8300000, guid: f31be2d6217e592429e5304546281893, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.25
@@ -331,3 +333,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+--- !u!95 &-6856741102281225296
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3381073493851452118}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 2c5b3c7917aa4b14eaddfbb7c0f46230, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &4347359376525462795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3381073493851452118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientAuthority: 0
+  animator: {fileID: -6856741102281225296}

@@ -82,7 +82,7 @@ public class AIResources : ConnectionResources {
         this.aiShape = new SpawnableShape {
             //Shape list set in unity editor
             prefab = this.spawnablePrefabs[0],
-            hitpoints = 30,
+            hitpoints = 15,
             movementspeed = 11,
             maxMovementspeed = 16,
             rotationspeed = 200f,
