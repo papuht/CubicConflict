@@ -372,7 +372,7 @@ public class PlayerResources : NetworkBehaviour {
     }
 
     private static int dashCD = 8;
-    private static int healCD = 3;
+    private static int healCD = 50;
     private static int growCD = 40;
     private static int knockoutCD = 30;
 
