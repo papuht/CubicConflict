@@ -2,13 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-public class AISpawnScript : NetworkBehaviour
-{
+public class AISpawnScript : NetworkBehaviour {
     private double lastCheck;
-
-    
-
-
 
     public void resetTimer() {
         this.lastCheck = Time.time;
@@ -35,45 +30,48 @@ public class AISpawnScript : NetworkBehaviour
     }
 
 
-    public void AssignGroup(GameObject ai)
-    {
+    public void AssignGroup(GameObject ai) {
+        int botCount = GetComponent<AIResources>().bottomdefense.Count;
+        int midCount = GetComponent<AIResources>().middefense.Count;
+        int topCount = GetComponent<AIResources>().topdefense.Count;
+        int captureLimit = 2;
 
-        if (GetComponent<AIResources>().bottomdefense.Count <= 5)
-        {
-
-
+        //Do some randomizing in order to not be as predictable
+        System.Random r = new System.Random();
+        int c = r.Next(1, 4);
+        if(c == 1 && botCount < captureLimit) {
             GetComponent<AIResources>().bottomdefense.Add(ai);
-            Debug.Log("BottomDefense:" + GetComponent<AIResources>().bottomdefense.Count);
-
+            Debug.Log("BottomDefense: (Randomizer) " + botCount);
+            return;
         }
-
-        else if (GetComponent<AIResources>().bottomdefense.Count >= 5 && GetComponent<AIResources>().middefense.Count <= 5)
-        {
-
+        else if(c == 2 && midCount < captureLimit) {
             GetComponent<AIResources>().middefense.Add(ai);
-            Debug.Log("Middefense:" + GetComponent<AIResources>().middefense.Count);
-
+            Debug.Log("Middefense: (Randomizer) " + midCount);
+            return;
         }
-
-
-        else if (GetComponent<AIResources>().middefense.Count >= 5 && GetComponent<AIResources>().bottomdefense.Count >= 5 && GetComponent<AIResources>().topdefense.Count <= 5)
-        {
-
-
-
+        else if(c == 3 && topCount < captureLimit) {
             GetComponent<AIResources>().topdefense.Add(ai);
-            Debug.Log("Topdefense:" + GetComponent<AIResources>().topdefense.Count);
-
-
+            Debug.Log("Topdefense: (Randomizer)" + topCount);
+            return;
         }
-        else
-        {
 
+        //If randomizer didnt hit an empty spawn use ordered approach
+        if (botCount < captureLimit){
+            GetComponent<AIResources>().bottomdefense.Add(ai);
+            Debug.Log("BottomDefense:" + botCount);
+        }
+        else if (midCount < captureLimit) {
+            GetComponent<AIResources>().middefense.Add(ai);
+            Debug.Log("Middefense:" + midCount);
+        }
+        else if (topCount < captureLimit) {
+            GetComponent<AIResources>().topdefense.Add(ai);
+            Debug.Log("Topdefense:" + topCount);
+        }
+        else {
             GetComponent<AIResources>().attackGroup.Add(ai);
             Debug.Log("Attackgroup:" + GetComponent<AIResources>().attackGroup.Count);
-
         }
-
 
     }
 

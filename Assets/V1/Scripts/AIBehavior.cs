@@ -28,11 +28,8 @@ public class AIBehavior : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         ControlCheck();
-        
-
     }
 
     /*
@@ -121,74 +118,11 @@ public class AIBehavior : MonoBehaviour
         pm.remoteHandleMovingObject(ai, destination);
     }
 
-    private void ControlCheck()
-    {
-        
-        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).bottomdefense.Contains(this.ai))
-        {
-            if (captureBot.GetComponent<Capture>().getPlayer1Control())
-            {
-                Vector3 destination = captureBot.transform.position;
-                Movement(destination, this.ai);
-            }
-            else if (!captureBot.GetComponent<Capture>().getPlayer2Control())
-            {
-                Vector3 destination = captureBot.transform.position;
-                Movement(destination, this.ai);
-            }
-            else if (captureBot.GetComponent<Capture>().getPlayer2Control())
-            {
-                Vector3 destination = captureBot.transform.position;
-                Movement(destination, this.ai);
-            }
-
-        }
-
-        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).middefense.Contains(this.ai))
-        {
-            if (captureMid.GetComponent<Capture>().getPlayer1Control())
-            {
-                Vector3 destination = captureMid.transform.position;
-                Movement(destination, this.ai);
-            }
-            else if (!captureMid.GetComponent<Capture>().getPlayer2Control())
-            {
-                Vector3 destination = captureMid.transform.position;
-                Movement(destination, this.ai);
-            }
-            else if (captureMid.GetComponent<Capture>().getPlayer2Control())
-            {
-                Vector3 destination = captureMid.transform.position;
-                Movement(destination, this.ai);
-            }
-
-        }
-
-        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).topdefense.Contains(this.ai))
-        {
-            if (captureTop.GetComponent<Capture>().getPlayer1Control())
-            {
-                Vector3 destination = captureTop.transform.position;
-                Movement(destination, this.ai);
-            }
-            else if (!captureTop.GetComponent<Capture>().getPlayer2Control())
-            {
-                Vector3 destination = captureTop.transform.position;
-                Movement(destination, this.ai);
-            }
-            else if (captureTop.GetComponent<Capture>().getPlayer2Control())
-            {
-                Vector3 destination = captureTop.transform.position;
-                Movement(destination, this.ai);
-            }
-
-        }
-
-        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).attackGroup.Contains(this.ai))
-        {
-           if (captureMid.GetComponent<Capture>().getPlayer1Control())
+    private void ControlCheck() {
+        if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).attackGroup.Contains(this.ai)) {
+           if (captureTop.GetComponent<Capture>().getPlayer1Control())
                 {
-                    Vector3 destination = captureMid.transform.position;
+                    Vector3 destination = captureTop.transform.position;
                     Movement(destination, this.ai);
                 }
            else if (captureMid.GetComponent<Capture>().getPlayer1Control())
@@ -202,8 +136,18 @@ public class AIBehavior : MonoBehaviour
                 Movement(destination, this.ai);
             }
         }
-        
-        
-
+        else if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).bottomdefense.Contains(this.ai)) {
+                Vector3 destination = captureBot.transform.position;
+                Movement(destination, this.ai);
+        }
+        else if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).middefense.Contains(this.ai)) {
+            Vector3 destination = captureMid.transform.position;
+            Movement(destination, this.ai);
+        }
+        else if (((AIResources)GetComponent<PlayerResources>().getConnectionResources()).topdefense.Contains(this.ai)) {
+            Vector3 destination = captureTop.transform.position;
+            Movement(destination, this.ai);
+        }
+    
     }
 }
