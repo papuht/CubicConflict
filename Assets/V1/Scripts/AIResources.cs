@@ -21,10 +21,10 @@ public class AIResources : ConnectionResources {
 
     private SpawnableShape aiShape;
 
-    public ArrayList bottomdefense = new ArrayList();
-    public ArrayList topdefense = new ArrayList();
-    public ArrayList middefense = new ArrayList();
-    public ArrayList attackGroup = new ArrayList();
+    public List<GameObject> bottomdefense = new List<GameObject>();
+    public List<GameObject> topdefense = new List<GameObject>();
+    public List<GameObject> middefense = new List<GameObject>();
+    public List<GameObject> attackGroup = new List<GameObject>();
 
 
 
@@ -52,6 +52,26 @@ public class AIResources : ConnectionResources {
 
     protected override void Update() {
         GetComponent<PlayerMovement>().handleAutoMove();
+        this.colletControlTrash();
+    }
+
+    private void colletControlTrash() {
+        this.removeNull(this.bottomdefense);
+        this.removeNull(this.middefense);
+        this.removeNull(this.topdefense);
+        this.removeNull(this.attackGroup);
+    }
+
+    private void removeNull(List<GameObject> list) {
+        List<GameObject> removeMe = new List<GameObject>();
+        foreach(GameObject gm in list) {
+            if(gm == null) {
+                removeMe.Add(gm);
+            }
+        }
+        foreach(GameObject trash in removeMe) {
+            list.Remove(trash);
+        }
     }
 
     public override void OnStartClient() {}

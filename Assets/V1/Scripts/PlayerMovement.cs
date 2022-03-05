@@ -368,9 +368,12 @@ public class PlayerMovement : NetworkBehaviour {
                    
                     RaycastHit2D[] res = new RaycastHit2D[100];
                     ContactFilter2D filter = new ContactFilter2D();
-             
+                                 
                     int healing = Physics2D.CircleCast(gm.gameObject.transform.position, 5.0f, gm.gameObject.transform.position, filter.NoFilter(), res);
                     Debug.Log("int healing:" +healing);
+
+                    gm.GetComponent<PlayerResources>().resetHeal(); //Also activates animation
+                    
                     for (int i = 0; i < healing; i++) {
                         if (
                             res[i].collider.gameObject.tag == "Player"
@@ -380,7 +383,6 @@ public class PlayerMovement : NetworkBehaviour {
                             res[i].collider.gameObject.GetComponent<PlayerResources>().increaseHitpoints(30);
                         }
                     }
-                    gm.GetComponent<PlayerResources>().resetHeal();
                 }
             }
         }

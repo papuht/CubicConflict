@@ -9,12 +9,17 @@ public class PlayerResources : NetworkBehaviour {
     void Start() {
         this.setSpriteColor(this.color);
         this.gm = this.gameObject;
+        Animator animator = GetComponent<Animator>();
+        if(animator) {
+            animator.Rebind();
+        }
     }
 
     private void Update() {
         //Handle abilities with an expiration timer
         this.handleSizeReversion();
         this.handleKnockoutStatus();
+        this.handleHealAnimation();
     }
 
     private SyncDictionary<string, string> storage = new SyncDictionary<string, string>();
@@ -84,6 +89,9 @@ public class PlayerResources : NetworkBehaviour {
 
     [SyncVar]
     private bool knockoutEnabled = false;
+
+    [SyncVar]
+    private bool healEnabled = false;
 
 
     /**
@@ -364,7 +372,7 @@ public class PlayerResources : NetworkBehaviour {
     }
 
     private static int dashCD = 8;
-    private static int healCD = 50;
+    private static int healCD = 3;
     private static int growCD = 40;
     private static int knockoutCD = 30;
 
@@ -382,7 +390,7 @@ public class PlayerResources : NetworkBehaviour {
             case "Pentagon": //Grow cd
                 flatCD = (int) (growCD - (Time.time - this.changeTimer));
                 break; 
-             case "Octagon": //TODO:
+             case "Octagon": //knockout cd
                 flatCD = (int) (knockoutCD - (Time.time - this.knockoutTimer));
                 break;        
         }
@@ -450,6 +458,28 @@ public class PlayerResources : NetworkBehaviour {
         }
     }
 
+    public void handleHealAnimation() {
+        if(this.type != "Square") {
+            Debug.Log("NOT SQUARE");
+            return;
+        }
+
+        Animator animator = GetComponentInChildren<Animator>();
+        if(!animator) {
+            Debug.Log("ANNIMATION ERROR");
+        }
+
+        if(
+            this.healEnabled
+            && (Time.time - this.healTimer) > 0.1
+        ) {
+            this.healEnabled = false;
+        }
+
+        animator.SetBool("animateHeal", this.healEnabled);
+
+    }
+
     public bool isHealReady() {
         if ((Time.time - this.healTimer) > healCD) {
             return true;
@@ -460,6 +490,7 @@ public class PlayerResources : NetworkBehaviour {
     [Server]
     public void resetHeal() {
         this.healTimer = Time.time;
+        this.healEnabled = true;
     }
 
     public bool isKnockoutReady() {
