@@ -55,6 +55,12 @@ public class ConnectionResources : NetworkBehaviour {
 
     protected double countdownCheck;
 
+    private bool showingExit = false;
+    private GameObject exitContainer;
+
+    private bool showingHelp = false;
+    private GameObject helpContainer;
+
     public SpawnableShape getSpawnShape() {
         return this.spawnShape;
     }
@@ -106,10 +112,19 @@ public class ConnectionResources : NetworkBehaviour {
     protected bool singleplayer = false;
 
 
-    
 
     public virtual bool isReady() {
         return this.ready;
+    }
+
+    public void toggleExitContainer() {
+        this.showingExit = !this.showingExit;
+        this.exitContainer.SetActive(this.showingExit);
+    }
+
+    public void toggleHelpContainer() {
+        this.showingHelp = !this.showingHelp;
+        this.helpContainer.SetActive(this.showingHelp);
     }
     
     [Server]
@@ -158,6 +173,45 @@ public class ConnectionResources : NetworkBehaviour {
             this.countdownCheck = Time.time;
             this.spawnAI();
         }
+
+       this.setupInGameUI();
+    }
+
+    public void setupInGameUI() {
+        ControlRouter router = GetComponent<ControlRouter>();
+
+        GameObject.Find("SelectKey").GetComponent<Text>().text = 
+            router.getLoadedKey(ControlRouter.Key.C1).ToString().Replace("Alpha", "")
+            + " " + router.getLoadedKey(ControlRouter.Key.C2).ToString().Replace("Alpha", "")
+            + " " + router.getLoadedKey(ControlRouter.Key.C3).ToString().Replace("Alpha", "")
+            + " " + router.getLoadedKey(ControlRouter.Key.C4).ToString().Replace("Alpha", "") 
+            + " (ctrl):";
+
+        GameObject.Find("SwapKey").GetComponent<Text>().text = 
+            router.getLoadedKey(ControlRouter.Key.S1).ToString()
+            + " " + router.getLoadedKey(ControlRouter.Key.S2).ToString()
+            + " " + router.getLoadedKey(ControlRouter.Key.S3).ToString()
+            + " " + router.getLoadedKey(ControlRouter.Key.S4).ToString() 
+            + ":";
+
+        GameObject.Find("RotationKey").GetComponent<Text>().text = 
+            router.getLoadedKey(ControlRouter.Key.M2).ToString()
+            + " " + router.getLoadedKey(ControlRouter.Key.M3).ToString() + ":";
+
+        GameObject.Find("DashKey").GetComponent<Text>().text = router.getLoadedKey(ControlRouter.Key.A1).ToString() + ":";
+        GameObject.Find("HealKey").GetComponent<Text>().text = router.getLoadedKey(ControlRouter.Key.A2).ToString() + ":";
+        GameObject.Find("KnockoutKey").GetComponent<Text>().text = router.getLoadedKey(ControlRouter.Key.A3).ToString() + ":";
+        GameObject.Find("GrowKey").GetComponent<Text>().text = router.getLoadedKey(ControlRouter.Key.A4).ToString() + ":";
+        GameObject.Find("RallyKey").GetComponent<Text>().text = router.getLoadedKey(ControlRouter.Key.M4).ToString() + ":";
+
+
+        this.exitContainer = GameObject.Find("ExitBackground");
+        this.exitContainer.SetActive(false);
+        router.connectCallback(ControlRouter.Key.U1, this.toggleExitContainer);
+
+        this.helpContainer = GameObject.Find("ControlContainer");
+        this.helpContainer.SetActive(false);
+        router.connectCallback(ControlRouter.Key.U2, this.toggleHelpContainer);
     }
     
     protected virtual void Update() {

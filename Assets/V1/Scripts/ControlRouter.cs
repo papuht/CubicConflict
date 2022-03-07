@@ -16,7 +16,8 @@ public class ControlRouter : MonoBehaviour {
         C1 = KeyCode.Alpha1, C2 = KeyCode.Alpha2, C3 = KeyCode.Alpha3, C4 = KeyCode.Alpha4,
         A1 = KeyCode.Q, A2 = KeyCode.W, A3 = KeyCode.E, A4 = KeyCode.R,
         S1 = KeyCode.A, S2 = KeyCode.S, S3 = KeyCode.D, S4 = KeyCode.F,
-        M1 = KeyCode.Space, M2 = KeyCode.X, M3 = KeyCode.Z, M4 = KeyCode.C
+        M1 = KeyCode.Space, M2 = KeyCode.X, M3 = KeyCode.Z, M4 = KeyCode.C,
+        U1 = KeyCode.Escape, U2 = KeyCode.Tab
     };
 
     void Start() {
@@ -98,6 +99,19 @@ public class ControlRouter : MonoBehaviour {
         }
     }
 
+    public KeyCode getLoadedKey(Key keyEnum) {
+        return this.mainKeyMap[keyEnum].Key;
+    }
+
+    public KeyCode getLoadedKey(Modifier mod, Key keyEnum) {
+        if(mod == Modifier.SHIFT) {
+            return this.shiftKeyMap[keyEnum].Key;
+        }
+        else {
+            return this.ctrlKeyMap[keyEnum].Key;
+        }
+    }
+
     //Map for all available keys
     public struct KeyMap {
         public KeyCode C1; public KeyCode C2; public KeyCode C3; public KeyCode C4; //Control-groups 1-4
@@ -108,6 +122,8 @@ public class ControlRouter : MonoBehaviour {
 
         //m1: Camera to base, m2: Rally point, m3: Spin up, m4: Spin down 
         public KeyCode M1; public KeyCode M2; public KeyCode M3; public KeyCode M4; //Misc. controls
+
+        public KeyCode U1; public KeyCode U2; //UI controls
     }
 
     //Available modifiers
@@ -120,7 +136,8 @@ public class ControlRouter : MonoBehaviour {
         C1, C2, C3, C4,
         A1, A2, A3, A4,
         S1, S2, S3, S4,
-        M1, M2, M3, M4
+        M1, M2, M3, M4,
+        U1, U2 
     }
 
     private Key stringToKeyEnum(string key) {
