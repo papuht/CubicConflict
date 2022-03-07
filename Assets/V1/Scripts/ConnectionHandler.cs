@@ -51,6 +51,9 @@ public class ConnectionHandler : MonoBehaviour {
     public GameObject endGameRedContainer;
     public Button endGameReturnRed;
 
+    //Exit container
+    public Button exitGameButton;
+
     void Start() {
         this.hostBtn.onClick.AddListener(StartHost);
         this.hostBackBtn.onClick.AddListener(stopHost);
@@ -58,6 +61,7 @@ public class ConnectionHandler : MonoBehaviour {
         this.connectBtn.onClick.AddListener(StartClient);
         this.endGameReturnRed.onClick.AddListener(killBothConnections);
         this.endGameReturnBlue.onClick.AddListener(killBothConnections);
+        this.exitGameButton.onClick.AddListener(killBothConnections);
 
         this.joinBtn.onClick.AddListener(
             () => { 

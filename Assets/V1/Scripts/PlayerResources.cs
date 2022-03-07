@@ -387,10 +387,10 @@ public class PlayerResources : NetworkBehaviour {
             case "Square": //Heal cd
                 flatCD = (int) (healCD - (Time.time - this.healTimer));
                 break;
-            case "Pentagon": //Grow cd
+            case "Octagon": //Grow cd
                 flatCD = (int) (growCD - (Time.time - this.changeTimer));
                 break; 
-             case "Octagon": //knockout cd
+             case "Pentagon": //knockout cd
                 flatCD = (int) (knockoutCD - (Time.time - this.knockoutTimer));
                 break;        
         }
@@ -460,7 +460,6 @@ public class PlayerResources : NetworkBehaviour {
 
     public void handleHealAnimation() {
         if(this.type != "Square") {
-            Debug.Log("NOT SQUARE");
             return;
         }
 

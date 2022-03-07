@@ -117,9 +117,9 @@ public class PlayerMovement : NetworkBehaviour {
 
         //Register callback methods for abilities
         router.connectCallback(ControlRouter.Key.A1, handleDash);
-        router.connectCallback(ControlRouter.Key.A2, handleSizeChange);
-        router.connectCallback(ControlRouter.Key.A3, handleHealing);
-        router.connectCallback(ControlRouter.Key.A4, handleKnockout);
+        router.connectCallback(ControlRouter.Key.A2, handleHealing);
+        router.connectCallback(ControlRouter.Key.A3, handleKnockout);
+        router.connectCallback(ControlRouter.Key.A4, handleSizeChange);
 
         //Register callback methods for Misc controls
         router.connectCallback(ControlRouter.Key.M1, handleShowSpawner);
@@ -322,7 +322,7 @@ public class PlayerMovement : NetworkBehaviour {
 
                 //Only works for octagon shape and only if it's not already changed
                 if(
-                    gm.GetComponent<PlayerResources>().getType() == "Octagon"
+                    gm.GetComponent<PlayerResources>().getType() == "Pentagon"
                     && gm.GetComponent<PlayerResources>().isKnockoutReady()
                 ) {
                     this.CMDEnableKnockout(gm);
@@ -339,7 +339,7 @@ public class PlayerMovement : NetworkBehaviour {
                 GameObject gm = entry.Value;
 
                 //Only works for pentagon shape and only if it's not already changed
-                if(gm.GetComponent<PlayerResources>().getType() == "Pentagon" && (gm.GetComponent<PlayerResources>().getIsSizeChanged() == false)) {
+                if(gm.GetComponent<PlayerResources>().getType() == "Octagon" && (gm.GetComponent<PlayerResources>().getIsSizeChanged() == false)) {
                     Vector2 temp;        
                     temp = gm.transform.localScale;
                     gm.GetComponent<PlayerResources>().setOriginalSize(temp);
