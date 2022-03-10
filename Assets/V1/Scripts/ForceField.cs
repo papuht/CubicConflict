@@ -17,42 +17,49 @@ public class ForceField : NetworkBehaviour
     */
     const string storageKey = "pre-field-damage";
 
+    void Update() {
+        Debug.Log("DDD");
+    }
+
 
     public void OnTriggerEnter2D(Collider2D collider)
     {
-        Debug.Log("Entering reload depot");
-
+        if(!this.isServer) {
+            return;
+        }
         if (collider.gameObject.tag != "Player")
         {
             return;
         }
 
-        PlayerResources pr = collider.gameObject.GetComponent<PlayerResources>();
+        CMDResetCD(collider.gameObject, this.gameObject);
+        
 
-        //Check if river ms reduce effect is already in place, by trying to get the previous ms value
-        //"" is the default value returned by the getter == empty
-       if (!collider.gameObject.GetComponent<PlayerResources>().isHealReady())
+    }
+
+    [Server]
+    public void CMDResetCD(GameObject gm, GameObject buff) {
+        if (!gm.gameObject.GetComponent<PlayerResources>().isHealReady())
         {
-            collider.gameObject.GetComponent<PlayerResources>().setHealTimer(0f); 
+            gm.gameObject.GetComponent<PlayerResources>().setHealTimer(0f); 
 
         }
 
-        if (!collider.gameObject.GetComponent<PlayerResources>().isDashReady())
+        if (!gm.gameObject.GetComponent<PlayerResources>().isDashReady())
         {
-            collider.gameObject.GetComponent<PlayerResources>().setDashTimer(0f);
+            gm.gameObject.GetComponent<PlayerResources>().setDashTimer(0f);
 
         }
-        if (!collider.gameObject.GetComponent<PlayerResources>().isKnockoutReady())
+        if (!gm.gameObject.GetComponent<PlayerResources>().isKnockoutReady())
         {
-            collider.gameObject.GetComponent<PlayerResources>().setKnockoutTimer(0f);  
+            gm.gameObject.GetComponent<PlayerResources>().setKnockoutTimer(0f);  
 
         }
-        if (!collider.gameObject.GetComponent<PlayerResources>().isChangeReady())
+        if (!gm.gameObject.GetComponent<PlayerResources>().isChangeReady())
         {
-            collider.gameObject.GetComponent <PlayerResources>().setChangeTimer(0f);    
-
-        }
-
+           gm.gameObject.GetComponent <PlayerResources>().setChangeTimer(0f);    
+        } 
+        Destroy(buff);
     }
 
    
