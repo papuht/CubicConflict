@@ -190,7 +190,7 @@ public class PlayerMovement : NetworkBehaviour {
                 entry.Value.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
                 entry.Value.gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0f;
 
-                Debug.Log("New movement registered: " + click);
+               // Debug.Log("New movement registered: " + click);
                 //If object is already in the movement group, give it a new destination
                 if(this.movingObjects.ContainsKey(entry.Key) && this.movingObjects[entry.Key] != null) {
                     //Debug.Log("New destination for: " + entry.Value);
